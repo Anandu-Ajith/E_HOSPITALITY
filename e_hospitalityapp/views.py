@@ -8,20 +8,52 @@ def home(request):
 def userRegistration(request):
     login_table=loginTable()
     userprofile=UserProfile()
+    medicalhistory = MedicalHistory()
+    medicalinsurance=MedicalInsurance()
     if request.method=='POST':
-        userprofile.date_of_birth=request.POST['date_of_birth']
-
-        userprofile.username=request.POST['username']
-        userprofile.password = request.POST['password']
-        userprofile.password2 = request.POST['password1']
-
+        username=request.POST['username']
+        password = request.POST['password']
+        password2 = request.POST['password1']
+        date_of_birth=request.POST['date_of_birth']
+        diagnosis=request.POST['diagnosis']
+        treatment=request.POST['treatment']
+        medications=request.POST['medications']
+        allergies=request.POST['allergies']
+        provider_name = request.POST['provider_name']
+        policy_number = request.POST['policy_number']
+        expiration_date = request.POST['expiration_date']
+        coverage_details = request.POST['coverage_details']
 
         login_table.username=request.POST['username']
         login_table.password=request.POST['password']
         login_table.password2=request.POST['password1']
         login_table.type='patient'
-        if request.POST['password']==request.POST['password1']:
+        if password==password2:
+            user = User.objects.create_user(username=username,password=password)
+
+            userprofile.user = user
+            userprofile.date_of_birth  = date_of_birth
+
+            medicalhistory.diagnosis = diagnosis
+            medicalhistory.treatment = treatment
+            medicalhistory.medications = medications
+            medicalhistory.allergies = allergies
+
+            medicalhistory.user_profile = userprofile
+
+            medicalinsurance.provider_name=provider_name
+            medicalinsurance.policy_number = policy_number
+            medicalinsurance.expiration_date = expiration_date
+            medicalinsurance.coverage_details = coverage_details
+
+            medicalinsurance.user_profile= userprofile
+
+
+
+
             userprofile.save()
+            medicalhistory.save()
+            medicalinsurance.save()
             login_table.save()
 
             messages.info(request,'Registration success')
