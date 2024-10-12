@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page 📝</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+  }
+  .container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+  }
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+  }
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
+  a {
+    color: #333;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+
+<body>
+    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold text-gray-800">Register</h2>
+    </div>
+    <form class="space-y-4" method="post">
+        {% csrf_token %}
+      <div>
+        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+        <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Email">
+      </div>
+      <div>
+        <label for="date_of_birth" class="block text-gray-700 text-sm font-bold mb-2">DOB</label>
+        <input name="date_of_birth" type="date" id="date_of_birth" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Password">
+      </div>
+      <div class="relative w-full rounded-md shadow-md">
+  <label for="gender" class="absolute top-3 left-3 text-gray-700 text-sm font-medium"></label>
+  <select id="gender" class="block w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <option value="">Select Gender</option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+    <option value="other">Other</option>
+  </select>
+</div>
+        <div>
+        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+        <input name="password" type="number" id="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Password">
+      </div>
+         <div>
+        <label for="password1" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+        <input name="password1" type="number" id="password1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Password">
+      </div>
+
+       <div class="flex gap-4">
+    <div class="flex items-center">
+      <input type="radio" id="single" name="maritalStatus" value="single" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 rounded">
+      <label for="single" class="ml-2 text-gray-700">Single</label>
+    </div>
+    <div class="flex items-center">
+      <input type="radio" id="married" name="maritalStatus" value="married" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 rounded">
+      <label for="married" class="ml-2 text-gray-700">Married</label>
+    </div>
+        <div>
+        <label for="phoneno" class="block text-gray-700 text-sm font-bold mb-2">Phone Number (Mobile, Landline)</label>
+        <input type="number" id="phoneno" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Mobile Number">
+      </div>
+      <div>
+        <label for="insurance_info" class="block text-gray-700 text-sm font-bold mb-2">Insurance Policy Number</label>
+        <input type="number" id="insurance_info" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
+      </div>
+      <div class="flex items-center justify-between">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Register</button>
+        <a href="#" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">Already have an account?</a>
+      </div>
+       </div>
+    </form>
+
+  </div>
+</div>
+</body>
+
+
+</html>
