@@ -1,8 +1,160 @@
-{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facility Form 📝</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+           body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  .bg-gray-100 {
+    background-color: #f5f5f5;
+  }
+  .text-gray-800 {
+    color: #333;
+  }
+  .text-gray-700 {
+    color: #555;
+  }
+  .text-blue-600 {
+    color: #2980b9;
+  }
+  .bg-blue-500 {
+    background-color: #2980b9;
+  }
+  .hover:bg-blue-700 {
+    background-color: #21618c;
+  }
+  .shadow-md {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .rounded-lg {
+    border-radius: 1rem;
+  }
+  .w-full {
+    width: 100%;
+  }
+  .max-w-md {
+    max-width: 48rem;
+  }
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  .font-bold {
+    font-weight: bold;
+  }
+  .block {
+    display: block;
+  }
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  .shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  .appearance-none {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  .border {
+    border: 1px solid #ddd;
+  }
+  .rounded {
+    border-radius: 0.25rem;
+  }
+  .py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .leading-tight {
+    line-height: 1.25;
+  }
+  .focus:outline-none {
+    outline: none;
+  }
+  .focus:shadow-outline {
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  }
+  .form-checkbox {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 1em;
+    height: 1em;
+    border: 2px solid #ddd;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  .form-checkbox:checked {
+    background-color: #2980b9;
+    border-color: #2980b9;
+  }
+  .ml-2 {
+    margin-left: 0.5rem;
+  }
+  .bg-blue-700 {
+    background-color: #21618c;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .font-bold {
+    font-weight: bold;
+  }
+  .py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .rounded {
+    border-radius: 0.25rem;
+  }
+  .focus:outline-none {
+    outline: none;
+  }
+  .focus:shadow-outline {
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  }
+        </style>
+</head>
+
+<body>
+   <div class="bg-gray-100 p-4 rounded-lg shadow-md w-full max-w-md mx-auto">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Facility Form</h2>
+ <form method="POST" class="bg-gray-100 p-4 rounded-lg shadow-md w-full max-w-md mx-auto">
+    {% block content %}
   <h2>{% if form.instance.pk %}Edit Facility{% else %}New Facility{% endif %}</h2>
-  <form method="POST">
+
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save</button>
   </form>
 {% endblock %}
+  </form>
+</div>
+</body>
+
+
+</html>

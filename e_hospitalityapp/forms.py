@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import MedicalHistory, MedicalInsurance
+from .models import MedicalHistory, MedicalInsurance, PatientProfile
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -110,3 +110,76 @@ class FacilityForm(forms.ModelForm):
     class Meta:
         model = Facility
         fields = ['name', 'location', 'department', 'resource_name', 'resource_quantity', 'resource_available']
+
+
+class PatientForm(forms.ModelForm):
+    class Meta:
+        model = PatientProfile
+        fields = ['age', 'gender', 'blood_group']
+
+
+
+from .models import PatientProfile, MedicalHistory, MedicalInsurance
+
+class PatientProfileForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+
+    class Meta:
+        model = PatientProfile
+        fields = ['first_name', 'last_name', 'date_of_birth', 'age', 'gender', 'blood_group']
+
+    # Overriding the form's initialization to prepopulate user data
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Get the user instance
+        super(PatientProfileForm, self).__init__(*args, **kwargs)
+
+        if user:
+            self.fields['first_name'].initial = user.first_name
+            self.fields['last_name'].initial = user.last_name
+class MedicalHistoryForm(forms.ModelForm):
+    class Meta:
+        model = MedicalHistory
+        fields = ['diagnosis', 'treatment', 'medications', 'allergies']
+
+class MedicalInsuranceForm(forms.ModelForm):
+    class Meta:
+        model = MedicalInsurance
+        fields = ['provider_name', 'policy_number', 'expiration_date', 'coverage_details']
+
+
+
+
+from .models import Appointment, DoctorProfile
+
+
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['specialization', 'doctor', 'appointment_date', 'appointment_time_from', 'appointment_time_to']
+
+        widgets = {
+            'appointment_date': forms.DateInput(attrs={'type': 'date'}),
+            'appointment_time_from': forms.TimeInput(attrs={'type': 'time'}),
+            'appointment_time_to': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+    specialization = forms.ChoiceField(choices=[], label="Specialization")
+
+    doctor = forms.ModelChoiceField(queryset=DoctorProfile.objects.none(), label="Doctor")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        specializations = DoctorProfile.objects.values_list('specialization', flat=True).distinct()
+        self.fields['specialization'].choices = [(spec, spec) for spec in specializations]
+
+        if 'specialization' in self.data:
+            try:
+                specialization = self.data.get('specialization')
+                self.fields['doctor'].queryset = DoctorProfile.objects.filter(specialization=specialization)
+            except (ValueError, TypeError):
+                self.fields['doctor'].queryset = DoctorProfile.objects.none()
+        elif self.instance.pk:
+            self.fields['doctor'].queryset = DoctorProfile.objects.filter(specialization=self.instance.specialization)
+        else:
+            self.fields['doctor'].queryset = DoctorProfile.objects.none()

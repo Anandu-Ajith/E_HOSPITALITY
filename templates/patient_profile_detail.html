@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- patient_profile_detail.html -->
+<h1>Patient Profile: {{ patient_profile.user.username }}</h1>
+<a href="{% url 'edit-patient-profile' patient_profile.pk %}">Edit Patient Profile</a>
+<p><strong>Name:</strong> {{ patient_profile.user.first_name }} {{ patient_profile.user.last_name }}</p>
+<p><strong>Age:</strong> {{ patient_profile.age }}</p>
+<p><strong>Date of Birth:</strong> {{ patient_profile.date_of_birth }}</p>
+<p><strong>Gender:</strong> {{ patient_profile.get_gender_display }}</p>
+<p><strong>Blood Group:</strong> {{ patient_profile.get_blood_group_display }}</p>
+
+<h2>Medical History</h2>
+<a href="{% url 'edit-medical-history' patient_profile.pk %}">Edit Medical History</a>
+<p><strong>Diagnosis:</strong> {{ medical_history.diagnosis }}</p>
+<p><strong>Treatment:</strong> {{ medical_history.treatment }}</p>
+<p><strong>Medications:</strong> {{ medical_history.medications }}</p>
+<p><strong>Allergies:</strong> {{ medical_history.allergies }}</p>
+<p><strong>Date Recorded:</strong> {{ medical_history.date_recorded }}</p>
+
+<h2>Medical Insurance</h2>
+<a href="{% url 'edit-medical-insurance' patient_profile.pk %}">Edit Medical Insurance</a>
+<p><strong>Provider Name:</strong> {{ medical_insurance.provider_name }}</p>
+<p><strong>Policy Number:</strong> {{ medical_insurance.policy_number }}</p>
+<p><strong>Expiration Date:</strong> {{ medical_insurance.expiration_date }}</p>
+<p><strong>Coverage Details:</strong> {{ medical_insurance.coverage_details }}</p>
+
+</body>
+</html>

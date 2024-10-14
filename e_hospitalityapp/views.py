@@ -1,6 +1,9 @@
+import stripe
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 
 from .forms import DoctorRegistrationForm
 from .models import *
@@ -13,11 +16,13 @@ def home(request):
 
 def patientRegistration(request):
     login_table = loginTable()
-    userprofile = PatientProfile()
+    patientprofile = PatientProfile()
     medicalhistory = MedicalHistory()
     medicalinsurance = MedicalInsurance()
     if request.method == 'POST':
         username = request.POST['username']
+        firstname = request.POST['firstname']
+        lastname = request.POST['lastname']
         password = request.POST['password']
         password2 = request.POST['password1']
         date_of_birth = request.POST['date_of_birth']
@@ -29,32 +34,41 @@ def patientRegistration(request):
         policy_number = request.POST['policy_number']
         expiration_date = request.POST['expiration_date']
         coverage_details = request.POST['coverage_details']
+        gender = request.POST['gender']
+        age = request.POST['age']
+        blood_group = request.POST['blood_group']
 
-        login_table.username = request.POST['username']
-        login_table.password = request.POST['password']
-        login_table.password2 = request.POST['password1']
+        login_table.username = username
+        login_table.password = password
+        login_table.password2 = password2
         login_table.type = 'patient'
         if password == password2:
             user = User.objects.create_user(username=username, password=password)
+            user.first_name = firstname
+            user.last_name = lastname
 
-            userprofile.user = user
-            userprofile.date_of_birth = date_of_birth
+            patientprofile.user = user
+            patientprofile.date_of_birth = date_of_birth
+            patientprofile.blood_group = blood_group
+            patientprofile.gender = gender
+            patientprofile.age = age
 
             medicalhistory.diagnosis = diagnosis
             medicalhistory.treatment = treatment
             medicalhistory.medications = medications
             medicalhistory.allergies = allergies
 
-            medicalhistory.user_profile = userprofile
+            medicalhistory.user_profile = patientprofile
 
             medicalinsurance.provider_name = provider_name
             medicalinsurance.policy_number = policy_number
             medicalinsurance.expiration_date = expiration_date
             medicalinsurance.coverage_details = coverage_details
 
-            medicalinsurance.user_profile = userprofile
+            medicalinsurance.user_profile = patientprofile
 
-            userprofile.save()
+            user.save()
+            patientprofile.save()
             medicalhistory.save()
             medicalinsurance.save()
             login_table.save()
@@ -104,7 +118,7 @@ def loginPage1(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(request,username=username, password=password)
+        user = authenticate(request, username=username, password=password)
         try:
             if user is not None:
                 user_details = loginTable.objects.get(username=username, password=password)
@@ -126,6 +140,7 @@ def loginPage1(request):
         except:
             messages.error(request, 'invalid role')
     return render(request, 'login.html')
+
 
 def loginPage(request):
     if request.method == 'POST':
@@ -157,6 +172,7 @@ def loginPage(request):
             messages.error(request, 'Invalid username or password.')
 
     return render(request, 'login.html')
+
 
 def admin_view(request):
     user_name = request.session['username']
@@ -312,31 +328,30 @@ def admin_approve(request, pk):
     return redirect('admin_list')
 
 
-
-
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.contrib.auth.models import User
 
-class DoctorListView(ListView):
-        model = DoctorProfile
-        template_name = 'doctor_list.html'
-        context_object_name = 'doctors'
 
-    # You can add update and delete views as well
+class DoctorListView(ListView):
+    model = DoctorProfile
+    template_name = 'doctor_list.html'
+    context_object_name = 'doctors'
+
+
+# You can add update and delete views as well
 class DoctorUpdateView(UpdateView):
-        model = DoctorProfile
-        fields = ['specialization']  # Fields you want to allow updating
-        template_name = 'doctor_edit.html'
-        success_url = reverse_lazy('doctor_list')
+    model = DoctorProfile
+    fields = ['specialization']  # Fields you want to allow updating
+    template_name = 'doctor_edit.html'
+    success_url = reverse_lazy('doctor_list')
+
 
 class DoctorDeleteView(DeleteView):
-        model = DoctorProfile
-        template_name = 'doctor_confirm_delete.html'
-        success_url = reverse_lazy('doctor_list')
-
-
+    model = DoctorProfile
+    template_name = 'doctor_confirm_delete.html'
+    success_url = reverse_lazy('doctor_list')
 
 
 # facility/views.py
@@ -347,15 +362,18 @@ from django.urls import reverse
 from .models import Facility
 from .forms import FacilityForm
 
+
 # List all facilities
 def facility_list(request):
     facilities = Facility.objects.all()
     return render(request, 'facility_list.html', {'facilities': facilities})
 
+
 # View details of a specific facility
 def facility_detail(request, pk):
     facility = get_object_or_404(Facility, pk=pk)
     return render(request, 'facility_detail.html', {'facility': facility})
+
 
 # Create a new facility
 def facility_create(request):
@@ -367,6 +385,7 @@ def facility_create(request):
     else:
         form = FacilityForm()
     return render(request, 'facility_form.html', {'form': form})
+
 
 # Update an existing facility
 def facility_update(request, pk):
@@ -380,6 +399,7 @@ def facility_update(request, pk):
         form = FacilityForm(instance=facility)
     return render(request, 'facility_form.html', {'form': form})
 
+
 # Delete a facility
 def facility_delete(request, pk):
     facility = get_object_or_404(Facility, pk=pk)
@@ -387,3 +407,205 @@ def facility_delete(request, pk):
         facility.delete()
         return redirect('facility-list')
     return render(request, 'facility_confirm_delete.html', {'facility': facility})
+
+
+# views.py
+from django.shortcuts import render, get_object_or_404
+from .models import PatientProfile, MedicalHistory, MedicalInsurance
+
+
+def patient_profile_detail(request, pk):
+    # Get the patient profile using the primary key (pk)
+    patient_profile = get_object_or_404(PatientProfile, pk=pk)
+
+    # Get the related medical history and medical insurance
+    medical_history = get_object_or_404(MedicalHistory, user_profile=patient_profile)
+    medical_insurance = get_object_or_404(MedicalInsurance, user_profile=patient_profile)
+
+    # Pass the data to the template
+    context = {
+        'patient_profile': patient_profile,
+        'medical_history': medical_history,
+        'medical_insurance': medical_insurance,
+    }
+
+    return render(request, 'patient_profile_detail.html', context)
+
+
+# views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import PatientProfile, MedicalHistory, MedicalInsurance
+from .forms import PatientProfileForm, MedicalHistoryForm, MedicalInsuranceForm
+
+
+# Edit Patient Profile
+def edit_patient_profile(request, pk):
+    patient_profile = get_object_or_404(PatientProfile, pk=pk)
+    user = patient_profile.user  # Get the associated user
+
+    if request.method == 'POST':
+        form = PatientProfileForm(request.POST, instance=patient_profile, user=user)
+
+        if form.is_valid():
+            # Update the User model first
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
+
+            # Now update the PatientProfile model
+            form.save()
+            return redirect('patient-profile-detail', pk=pk)
+    else:
+        form = PatientProfileForm(instance=patient_profile, user=user)
+
+    return render(request, 'edit_patient_profile.html', {'form': form})
+
+
+# Edit Medical History
+def edit_medical_history(request, pk):
+    medical_history = get_object_or_404(MedicalHistory, user_profile__pk=pk)
+
+    if request.method == 'POST':
+        form = MedicalHistoryForm(request.POST, instance=medical_history)
+        if form.is_valid():
+            form.save()
+            return redirect('patient-profile-detail', pk=pk)
+    else:
+        form = MedicalHistoryForm(instance=medical_history)
+
+    return render(request, 'edit_medical_history.html', {'form': form})
+
+
+# Edit Medical Insurance
+def edit_medical_insurance(request, pk):
+    medical_insurance = get_object_or_404(MedicalInsurance, user_profile__pk=pk)
+
+    if request.method == 'POST':
+        form = MedicalInsuranceForm(request.POST, instance=medical_insurance)
+        if form.is_valid():
+            form.save()
+            return redirect('patient-profile-detail', pk=pk)
+    else:
+        form = MedicalInsuranceForm(instance=medical_insurance)
+
+    return render(request, 'edit_medical_insurance.html', {'form': form})
+
+
+from django.shortcuts import render, redirect
+from .forms import AppointmentForm
+from .models import DoctorProfile
+
+
+def create_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')  # Redirect to a success page
+        else:
+            print(form.errors)
+            print("Submitted data:", request.POST)
+    else:
+        form = AppointmentForm()
+
+    return render(request, 'create_appointment.html', {'form': form})
+
+
+from django.http import JsonResponse
+
+
+def get_doctors_by_specialization(request):
+    specialization = request.GET.get('specialization')
+    doctors = DoctorProfile.objects.filter(specialization=specialization).values('id', 'user__first_name',
+                                                                                 'user__last_name')
+    return JsonResponse(list(doctors), safe=False)
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Appointment
+from .forms import AppointmentForm
+from django.urls import reverse
+
+
+def edit_appointment(request, appointment_id):
+    # Get the existing appointment object or return 404 if not found
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.method == 'POST':
+        # Form submitted with data
+        form = AppointmentForm(request.POST, instance=appointment)
+        if form.is_valid():
+            form.save()
+            # Redirect to a success page or the list of appointments
+            return redirect(reverse('appointment_list'))  # Adjust the URL name based on your project
+    else:
+        # GET request, load the form with the existing appointment data
+        form = AppointmentForm(instance=appointment)
+
+    return render(request, 'edit_appointment.html', {'form': form, 'appointment': appointment})
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
+from .models import Appointment
+
+
+def delete_appointment(request, appointment_id):
+    # Get the appointment object or return 404 if not found
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.method == 'POST':
+        # When the user confirms the deletion, delete the appointment
+        appointment.delete()
+        # Redirect to the list of appointments or a success page
+        return redirect(reverse('appointment_list'))  # Adjust the URL name based on your project
+
+    # Render a confirmation page before deleting
+    return render(request, 'delete_appointment.html', {'appointment': appointment})
+
+
+def appointment_list(request):
+    appointments = Appointment.objects.all()
+    return render(request, 'appoinments.html', {'appointments': appointments})
+
+
+def patient_appointment_list(request):
+    selected_date = request.GET.get('date')
+    appointments = []
+
+    if selected_date:
+        appointments = Appointment.objects.filter(appointment_date=selected_date)
+
+    # If no date is selected, you can set the default to today or leave it empty
+    if not selected_date:
+        selected_date = timezone.now().date()
+
+    context = {
+        'appointments': appointments,
+        'selected_date': selected_date,
+    }
+    return render(request, 'patient_appointment_list.html', context)
+
+
+def create_checkout_session(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    if request.method == 'POST':
+        line_item = {
+            'price_data': {
+                'currency': 'USD',
+                'unit_amount': 100,
+                'product_data': {
+                    'name': ''
+                },
+                'quantity': 1
+            }
+        }
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[line_item],
+            mode='payment',
+            success_url=request.build_absolute_url(reverse('success')),
+            cancel_url=request.build_absolute_url(reverse('cancel'))
+        )
+        return redirect(checkout_session.url, code=303)

@@ -68,22 +68,48 @@
     <form class="space-y-4" method="post">
         {% csrf_token %}
       <div>
-        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">username</label>
         <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Email">
+      </div>
+        <div>
+        <label for="firstname" class="block text-gray-700 text-sm font-bold mb-2">First Name</label>
+        <input type="text" id="firstname" name="firstname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
+      </div>
+        <div>
+        <label for="lastname" class="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
+        <input type="text" id="lastname" name="lastname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
       </div>
       <div>
         <label for="date_of_birth" class="block text-gray-700 text-sm font-bold mb-2">DOB</label>
         <input name="date_of_birth" type="date" id="date_of_birth" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Password">
       </div>
-      <div class="relative w-full rounded-md shadow-md">
-  <label for="gender" class="absolute top-3 left-3 text-gray-700 text-sm font-medium"></label>
-  <select id="gender" class="block w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-    <option value="">Select Gender</option>
-    <option value="male">Male</option>
-    <option value="female">Female</option>
-    <option value="other">Other</option>
-  </select>
-</div>
+         <label for="age">Age:</label>
+    <input type="number" id="age" name="age" min="1" max="120" required><br><br>
+
+    <!-- Gender -->
+    <label>Gender:</label><br>
+    <input type="radio" id="male" name="gender" value="M" required>
+    <label for="male">Male</label><br>
+
+    <input type="radio" id="female" name="gender" value="F" required>
+    <label for="female">Female</label><br>
+
+    <input type="radio" id="other" name="gender" value="O" required>
+    <label for="other">Other</label><br><br>
+
+    <!-- Blood Group -->
+    <label for="blood_group">Blood Group:</label>
+    <select id="blood_group" name="blood_group" required>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+    </select><br><br>
+
         <div>
         <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
         <input name="password" type="number" id="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Password">

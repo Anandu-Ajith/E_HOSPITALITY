@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #FAF0CA;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+  th {
+    background-color: #0D3B66;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background-color: #F4D35E;
+  }
+  button {
+    background-color: #F95738;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #EE964B;
+  }
+</style>
+</head>
+<body>
+    <h1>Appointments for {{ selected_date }}</h1>
+     <div class="container mx-auto p-4">
+         <form method="GET" action="">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date" value="{{ selected_date }}">
+        <button type="submit">View Appointment Schedules</button>
+    </form>
+
+    <h2>Appointments:</h2>
+  <table class="table-auto w-full text-left">
+    <thead>
+      <tr>
+        <th class="px-4 py-2">Speciality</th>
+        <th class="px-4 py-2">Doctor Name</th>
+        <th class="px-4 py-2">Date</th>
+        <th class="px-4 py-2">Time</th>
+        <th class="px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for appointment in appointments %}
+      <tr>
+        <td class="px-4 py-2">{{appointment.specialization}}</td>
+        <td class="px-4 py-2">Dr. {{appointment.doctor.user.first_name}} {{appointment.doctor.user.last_name}}</td>
+        <td class="px-4 py-2">{{appointment.appointment_date}}</td>
+        <td class="px-4 py-2">{{appointment.appointment_time_from}} - {{appointment.appointment_time_to}}</td>
+        <td class="px-4 py-2"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Book Appointment</button></td>
+      </tr>
+       {% empty %}
+            <li>No appointments available for this date.</li>
+        {% endfor %}
+    </tbody>
+  </table>
+     </div>
+</body>
+</html>

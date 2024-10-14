@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" id="appointmentForm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Book Appointment</button>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+<!--   $("#id_specialization").change(function () {-->
+<!--    var specialization = $(this).val();-->
+<!--    $.ajax({-->
+<!--        url: "{% url 'get_doctors_by_specialization' %}",-->
+<!--        data: {-->
+<!--            'specialization': specialization-->
+<!--        },-->
+<!--        success: function (data) {-->
+<!--            var doctorDropdown = $("#id_doctor");-->
+<!--            doctorDropdown.empty();  // Clear existing options-->
+
+<!--            doctorDropdown.append('<option value="">Select a doctor</option>');  // Add default option-->
+
+<!--            $.each(data, function (index, doctor) {-->
+<!--                doctorDropdown.append('<option value="' + doctor.id + '">' + doctor.user__first_name + ' ' + doctor.user__last_name + '</option>');-->
+<!--            });-->
+<!--        }-->
+<!--    });-->
+<!--});-->
+$(document).ready(function () {
+    // Check if a specialization is pre-selected on page load
+    var specialization = $("#id_specialization").val();
+
+    if (specialization) {
+        // If specialization is selected, trigger the AJAX call to populate the doctors dropdown
+        fetchDoctorsBySpecialization(specialization);
+    }
+
+    // Trigger the API call when the specialization is changed by the user
+    $("#id_specialization").change(function () {
+        var specialization = $(this).val();
+        fetchDoctorsBySpecialization(specialization);
+    });
+
+    // Function to fetch doctors based on specialization via AJAX
+    function fetchDoctorsBySpecialization(specialization) {
+        $.ajax({
+            url: "{% url 'get_doctors_by_specialization' %}",
+            data: {
+                'specialization': specialization
+            },
+            success: function (data) {
+                var doctorDropdown = $("#id_doctor");
+                doctorDropdown.empty();  // Clear existing options
+
+                doctorDropdown.append('<option value="">Select a doctor</option>');  // Add default option
+
+                $.each(data, function (index, doctor) {
+                    doctorDropdown.append('<option value="' + doctor.id + '">' + doctor.user__first_name + ' ' + doctor.user__last_name + '</option>');
+                });
+            }
+        });
+    }
+});
+
+</script>
+
+</body>
+</html>

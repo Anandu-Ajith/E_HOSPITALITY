@@ -2,20 +2,28 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
-class Patient(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    username = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
-    gender= models.TextField()
-#     medical_history = models.TextField()
-#     insurance_info = models.CharField(max_length=200)
-
-
-
 class PatientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = models.DateField()
-    # gender = models.TextField()
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+
+    BLOOD_GROUP_CHOICES = [
+        ('A+', 'A+'),
+        ('A-', 'A-'),
+        ('B+', 'B+'),
+        ('B-', 'B-'),
+        ('AB+', 'AB+'),
+        ('AB-', 'AB-'),
+        ('O+', 'O+'),
+        ('O-', 'O-'),
+    ]
+    age = models.PositiveIntegerField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
 #     maritalStatus = models.CharField()
     # blood group
     def __str__(self):
@@ -102,3 +110,14 @@ class Facility(models.Model):
 
     def __str__(self):
         return f'{self.name} - {self.department}'
+
+
+class Appointment(models.Model):
+    specialization = models.CharField(max_length=100)
+    doctor = models.ForeignKey('DoctorProfile', on_delete=models.CASCADE)
+    appointment_date = models.DateField()
+    appointment_time_from = models.TimeField()
+    appointment_time_to = models.TimeField()
+
+    def __str__(self):
+        return f"Appointment with {self.doctor} on {self.appointment_date}"
