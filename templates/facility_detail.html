@@ -1,0 +1,8 @@
+{% block content %}
+  <h2>{{ facility.name }} - {{ facility.department }}</h2>
+  <p>Location: {{ facility.location }}</p>
+  <p>Resource: {{ facility.resource_name }} ({{ facility.resource_quantity }})</p>
+  <p>Available: {{ facility.resource_available }}</p>
+  <a href="{% url 'facility-update' facility.pk %}">Edit</a> |
+  <a href="{% url 'facility-delete' facility.pk %}">Delete</a>
+{% endblock %}

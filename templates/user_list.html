@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+  body {
+    background-color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+  }
+</style>
+</head>
+<body>
+     <div class="flex flex-col h-screen bg-gray-100">
+  <header class="bg-white shadow-md py-4 px-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+      <nav class="flex space-x-4">
+        <a href="{% url 'appoinments' %}" class="text-gray-600 hover:text-gray-900">Appointments</a>
+        <a  href="{% url 'facilities' %}"class="text-gray-600 hover:text-gray-900">Facilities</a>
+        <a href="{% url 'admin_view' %}" class="text-gray-600 hover:text-gray-900">Users</a>
+        <a href="{% url 'logout' %}" class="text-gray-600 hover:text-gray-900">Logout</a>
+      </nav>
+    </div>
+  </header>
+<form action="" method="post">
+     <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+
+  <div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+      Username
+    </label>
+    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
+  </div>
+  <div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+      Password
+    </label>
+    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Password">
+  </div>
+  <div class="mb-6">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+      Role
+    </label>
+    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role">
+      <option value="admin">Admin</option>
+      <option value="doctor">Doctor</option>
+    </select>
+  </div>
+  <div class="flex items-center justify-between">
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+      Add User
+    </button>
+  </div>
+
+</div>
+
+</form>
+     </div>
+</body>
+</html>

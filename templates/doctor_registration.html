@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Form 👨‍⚕️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #EEEEEE;
+    color: #222831;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .bg-white {
+    background-color: #FFFFFF;
+  }
+  .shadow-md {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .rounded {
+    border-radius: 8px;
+  }
+  .px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  .pt-6 {
+    padding-top: 1.5rem;
+  }
+  .pb-8 {
+    padding-bottom: 2rem;
+  }
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  .text-3xl {
+    font-size: 2rem;
+  }
+  .font-bold {
+    font-weight: bold;
+  }
+  .text-gray-800 {
+    color: #222831;
+  }
+  .block {
+    display: block;
+  }
+  .text-gray-700 {
+    color: #393E46;
+  }
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+  .shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  .appearance-none {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  .border {
+    border: 1px solid #EEEEEE;
+  }
+  .rounded {
+    border-radius: 4px;
+  }
+  .w-full {
+    width: 100%;
+  }
+  .py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .text-gray-700 {
+    color: #393E46;
+  }
+  .leading-tight {
+    line-height: 1.25;
+  }
+  .focus:outline-none {
+    outline: none;
+  }
+  .focus:shadow-outline {
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  }
+  .flex {
+    display: flex;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .bg-blue-500 {
+    background-color: #00ADB5;
+  }
+  .hover:bg-blue-700 {
+    background-color: #008CBA;
+  }
+  .text-white {
+    color: #FFFFFF;
+  }
+  .font-bold {
+    font-weight: bold;
+  }
+  .py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .rounded {
+    border-radius: 4px;
+  }
+  .focus:outline-none {
+    outline: none;
+  }
+  .focus:shadow-outline {
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  }
+</style>
+</head>
+
+<body>
+<form action="" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    {% csrf_token %}
+    <div class="container mx-auto p-4">
+  <h1 class="text-3xl font-bold text-gray-800 mb-4">Doctor Registration</h1>
+
+
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+        Username
+      </label>
+      <input name='username' class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="firstName">
+        First Name
+      </label>
+      <input name='first_name' class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="firstName" type="text" placeholder="First Name">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="lastName">
+        Last Name
+      </label>
+      <input name="last_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="lastName" type="text" placeholder="Last Name">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+        Email
+      </label>
+      <input name='email' class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email">
+    </div>
+    <div class="mb-4">
+      <label  class="block text-gray-700 text-sm font-bold mb-2" for="password">
+        Password
+      </label>
+      <input name='password' class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Password">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="phoneNumber">
+        Phone Number
+      </label>
+      <input name="phone" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="phoneNumber" type="tel" placeholder="Phone Number">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="specialization">
+        Specialization
+      </label>
+      <input name="specialization" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="specialization" type="text" placeholder="Specialization">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="experience">
+        Experience (Years)
+      </label>
+      <input name="experience" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="experience" type="number" placeholder="Experience">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="licenseNumber">
+        License Number
+      </label>
+      <input name="license_number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="licenseNumber" type="text" placeholder="License Number">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="profilePicture">
+        Profile Picture
+      </label>
+      <input name="profile_picture" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="profilePicture" type="file" accept="image/*">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="dateRegistered">
+        Date Registered
+      </label>
+      <input name="date_registered" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dateRegistered" type="date" placeholder="Date Registered">
+    </div>
+    <div class="flex items-center justify-between">
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+        Register
+      </button>
+    </div>
+</div>
+    </form>
+</body>
+ 
+ 
+</html>

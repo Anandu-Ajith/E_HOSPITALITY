@@ -21,3 +21,92 @@ class MedicalInsuranceForm(forms.ModelForm):
     class Meta:
         model = MedicalInsurance
         fields = ['provider_name', 'policy_number', 'expiration_date', 'coverage_details']
+class DoctorRegistrationForm(forms.ModelForm):
+    username= forms.CharField(max_length=100, required=True)
+    first_name = forms.CharField(max_length=100, required=True)
+    last_name = forms.CharField(max_length=100, required=True)
+    email = forms.EmailField(required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    password_confirm = forms.CharField(widget=forms.PasswordInput, required=True)
+    phone = forms.CharField(max_length=15, required=True)
+    specialization = forms.CharField(max_length=100, required=True)
+    experience = forms.IntegerField(min_value=0, required=True)
+    license_number = forms.CharField(max_length=100, required=True)
+    profile_picture = forms.ImageField(required=False)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'password']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
+
+        if password != password_confirm:
+            raise forms.ValidationError("Passwords do not match!")
+
+        return cleaned_data
+
+
+from django import forms
+from django.contrib.auth.models import User
+from .models import Administrator
+
+
+class AdminRegistrationForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=100, required=True)
+    last_name = forms.CharField(max_length=100, required=True)
+    email = forms.EmailField(required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    password_confirm = forms.CharField(widget=forms.PasswordInput, required=True)
+    phone = forms.CharField(max_length=15, required=True)
+
+    department = forms.CharField(max_length=100, required=True)
+    position = forms.CharField(max_length=100, required=True)
+    employee_id = forms.CharField(max_length=100, required=True)
+    date_of_joining = forms.DateField(widget=forms.SelectDateWidget, required=True)
+    profile_picture = forms.ImageField(required=False)
+
+    # Address Fields
+    address_line1 = forms.CharField(max_length=255, required=True)
+    city = forms.CharField(max_length=100, required=True)
+    state = forms.CharField(max_length=100, required=True)
+    postal_code = forms.CharField(max_length=20, required=True)
+    country = forms.CharField(max_length=100, required=True)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'password']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
+
+        if password != password_confirm:
+            raise forms.ValidationError("Passwords do not match!")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = User.objects.create_user(
+            username=self.cleaned_data['email'],
+            first_name=self.cleaned_data['first_name'],
+            last_name=self.cleaned_data['last_name'],
+            email=self.cleaned_data['email'],
+            password=self.cleaned_data['password']
+        )
+
+        if commit:
+            user.save()
+
+        return user
+
+
+from .models import Facility
+
+class FacilityForm(forms.ModelForm):
+    class Meta:
+        model = Facility
+        fields = ['name', 'location', 'department', 'resource_name', 'resource_quantity', 'resource_available']
