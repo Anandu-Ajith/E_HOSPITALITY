@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+{% extends 'admin_nav.html' %}
+
+{% block content %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,127 +9,121 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
-        <style>
-           body {
-    font-family: 'Roboto', sans-serif;
-  }
-  .bg-gray-100 {
-    background-color: #f5f5f5;
-  }
-  .bg-white {
-    background-color: #fff;
-  }
-  .shadow-md {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-  .text-gray-600 {
-    color: #718096;
-  }
-  .hover:text-gray-900 {
-    color: #333;
-  }
-  .text-2xl {
-    font-size: 1.5rem;
-  }
-  .font-bold {
-    font-weight: 700;
-  }
-  .flex {
-    display: flex;
-  }
-  .flex-col {
-    flex-direction: column;
-  }
-  .justify-between {
-    justify-content: space-between;
-  }
-  .items-center {
-    align-items: center;
-  }
-  .space-x-4 {
-    gap: 1rem;
-  }
-  .flex-grow {
-    flex-grow: 1;
-  }
-  .p-6 {
-    padding: 2rem;
-  }
-  .grid {
-    display: grid;
-  }
-  .grid-cols-1 {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-  .md:grid-cols-2 {
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  .lg:grid-cols-3 {
-    @media (min-width: 1024px) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-  .gap-6 {
-    gap: 2rem;
-  }
-  .rounded-lg {
-    border-radius: 0.5rem;
-  }
-  .list-disc {
-    list-style-type: disc;
-  }
-  .text-center {
-    text-align: center;
-  }
-  .bg-gray-200 {
-    background-color: #e2e8f0;
-  }
-        </style>
+    <style>
+        body {
+ font-family: 'Roboto', sans-serif;
+}
+.bg-gray-100 {
+ background-color: #f5f5f5;
+}
+.bg-white {
+ background-color: #fff;
+}
+.shadow-md {
+ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.text-gray-600 {
+ color: #718096;
+}
+.hover:text-gray-900 {
+ color: #333;
+}
+.text-2xl {
+ font-size: 1.5rem;
+}
+.font-bold {
+ font-weight: 700;
+}
+.flex {
+ display: flex;
+}
+.flex-col {
+ flex-direction: column;
+}
+.justify-between {
+ justify-content: space-between;
+}
+.items-center {
+ align-items: center;
+}
+.space-x-4 {
+ gap: 1rem;
+}
+.flex-grow {
+ flex-grow: 1;
+}
+.p-6 {
+ padding: 2rem;
+}
+.grid {
+ display: grid;
+}
+.grid-cols-1 {
+ grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.md:grid-cols-2 {
+ @media (min-width: 768px) {
+   grid-template-columns: repeat(2, minmax(0, 1fr));
+ }
+}
+.lg:grid-cols-3 {
+ @media (min-width: 1024px) {
+   grid-template-columns: repeat(3, minmax(0, 1fr));
+ }
+}
+.gap-6 {
+ gap: 2rem;
+}
+.rounded-lg {
+ border-radius: 0.5rem;
+}
+.list-disc {
+ list-style-type: disc;
+}
+.text-center {
+ text-align: center;
+}
+.bg-gray-200 {
+ background-color: #e2e8f0;
+}
+    </style>
 </head>
 <body>
-<div class="flex flex-col h-screen bg-gray-100">
-  <header class="bg-white shadow-md py-4 px-6">
-    <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-      <nav class="flex space-x-4">
-        <a href="{% url 'admin_list' %}" class="text-gray-600 hover:text-gray-900">Admin Requests</a>
-          <a href="{% url 'doctor_list' %}" class="text-gray-600 hover:text-gray-900">Doctor Requests</a>
-        <a href="{% url 'appoinments' %}" class="text-gray-600 hover:text-gray-900">Appointments</a>
-        <a  href="{% url 'facilities' %}"class="text-gray-600 hover:text-gray-900">Facilities</a>
-        <a href="{% url 'logout' %}" class="text-gray-600 hover:text-gray-900">Logout</a>
-      </nav>
-    </div>
-    <div class="container mt-5">
-        <h2>Doctors List</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Specialization</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for doctor in doctors %}
-                <tr>
-                    <td>{{ doctor.user.username }}</td>
-                    <td>{{ doctor.specialization }}</td>
-                    <td>
-                        <!-- Edit Button -->
-                        <a href="{% url 'doctor_edit' doctor.pk %}" class="btn btn-warning btn-sm">Edit</a>
+<div class="container mt-5">
+    <h2>Doctors List</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Specialization</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for doctor in doctors %}
+        <tr>
+            <td>{{ doctor.user.username }}</td>
+            <td>{{ doctor.specialization }}</td>
+            <td>
+                <!-- Edit Button -->
+                <a href="{% url 'doctor_edit' doctor.pk %}" class="btn btn-warning btn-sm">Edit</a>
 
-                        <!-- Delete Button -->
-                        <form action="{% url 'doctor_delete' doctor.pk %}" method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                <!-- Delete Button -->
+                <form action="{% url 'doctor_delete' doctor.pk %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+                <form action="{% url 'doctor_approve' doctor.pk %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link" style="color: black; text-decoration: none;">Approve
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
+{% endblock %}

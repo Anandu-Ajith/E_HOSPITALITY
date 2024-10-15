@@ -1,10 +1,33 @@
-<!DOCTYPE html>
+{% extends 'patient_view.html' %}
+
+{% block content %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+  <div class="bg-gray-100 min-h-screen py-6 flex flex-col items-center justify-center">
+      <div class="bg-white shadow-md rounded-lg px-8 py-6 w-full max-w-md">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Patient Dashboard</h2>
+          <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Patient Name:</label>
+              <input type="text" value='{{ patient_profile.user.username }}' disabled class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Name">
+          </div> <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Age:</label> <input type="number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="19"> </div>
+          <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Date of Birth:</label> <input type="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="April 23, 2024"> </div>
+          <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Gender:</label> <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"> <option value="Male">Male</option> <option value="Female">Female</option> <option value="Other">Other</option> </select> </div>
+          <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Blood Group:</label> <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="O+"> </div>
+          <div class="mb-6"> <h3 class="text-xl font-bold text-gray-800 mb-2">Medical History</h3> <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit Medical History</button>
+              <div class="mt-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Diagnosis:</label> <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Fever"> </div>
+              <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Treatment:</label> <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Paracetamol"> </div>
+              <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Medications:</label> <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Paracetamol"> </div>
+              <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Allergies:</label> <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="none"> </div>
+              <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Date Recorded:</label> <input type="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Oct. 14, 2024"> </div> </div>
+          <div class="mb-6"> <h3 class="text-xl font-bold text-gray-800 mb-2">Medical Insurance</h3> <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit Medical Insurance</button>
+              <div class="mt-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Provider Name:</label> <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="NewIndia"> </div>
+              <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Policy Number:</label> <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="3232"> </div>
+              <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Expiration Date:</label> <input type="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Oct. 8, 2024"> </div>
+              <div class="mb-4"> <label class="block text-gray-700 text-sm font-bold mb-2">Coverage Details:</label> <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            placeholder="Coverage Details"></textarea> </div> </div> </div> </div>
 <!-- patient_profile_detail.html -->
 <h1>Patient Profile: {{ patient_profile.user.username }}</h1>
 <a href="{% url 'edit-patient-profile' patient_profile.pk %}">Edit Patient Profile</a>
@@ -14,13 +37,13 @@
 <p><strong>Gender:</strong> {{ patient_profile.get_gender_display }}</p>
 <p><strong>Blood Group:</strong> {{ patient_profile.get_blood_group_display }}</p>
 
-<h2>Medical History</h2>
-<a href="{% url 'edit-medical-history' patient_profile.pk %}">Edit Medical History</a>
-<p><strong>Diagnosis:</strong> {{ medical_history.diagnosis }}</p>
-<p><strong>Treatment:</strong> {{ medical_history.treatment }}</p>
-<p><strong>Medications:</strong> {{ medical_history.medications }}</p>
-<p><strong>Allergies:</strong> {{ medical_history.allergies }}</p>
-<p><strong>Date Recorded:</strong> {{ medical_history.date_recorded }}</p>
+<!--<h2>Medical History</h2>-->
+<!--<a href="{% url 'edit-medical-history' patient_profile.pk %}">Edit Medical History</a>-->
+<!--<p><strong>Diagnosis:</strong> {{ medical_history.diagnosis }}</p>-->
+<!--<p><strong>Treatment:</strong> {{ medical_history.treatment }}</p>-->
+<!--<p><strong>Medications:</strong> {{ medical_history.medications }}</p>-->
+<!--<p><strong>Allergies:</strong> {{ medical_history.allergies }}</p>-->
+<!--<p><strong>Date Recorded:</strong> {{ medical_history.date_recorded }}</p>-->
 
 <h2>Medical Insurance</h2>
 <a href="{% url 'edit-medical-insurance' patient_profile.pk %}">Edit Medical Insurance</a>
@@ -31,3 +54,5 @@
 
 </body>
 </html>
+
+{% endblock %}

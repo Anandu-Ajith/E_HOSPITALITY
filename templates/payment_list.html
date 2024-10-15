@@ -1,0 +1,20 @@
+{% extends 'patient_view.html' %}
+
+{% block content %}
+<h2>Payment Details for {{ patient_profile.user.username }}</h2>
+<ul>
+    {% for payment in payments %}
+    <li>
+        Appointment Date: {{ payment.appointment.appointment_date }}<br>
+        Doctor: {{ payment.appointment.doctor }}<br>
+        Amount: ${{ payment.amount }}<br>
+        Stripe Charge ID: {{ payment.stripe_charge_id }}<br>
+        Payment Date: {{ payment.timestamp }}<br>
+        <hr>
+    </li>
+    {% empty %}
+    <li>No payment details available.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

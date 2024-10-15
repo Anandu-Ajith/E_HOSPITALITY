@@ -1,0 +1,6 @@
+{% block content %}
+    <h2>Payment Successful!</h2>
+    <p>Your payment for the appointment with Dr. {{ appointment.doctor.user.first_name }} {{ appointment.doctor.user.last_name }} has been confirmed.</p>
+    <p>Appointment Date: {{ appointment.appointment_date }}</p>
+    <a href="{% url 'appointment_details' appointment.id %}" class="btn btn-primary">View Appointment Details</a>
+{% endblock %}

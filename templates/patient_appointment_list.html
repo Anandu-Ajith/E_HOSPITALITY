@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+{% extends 'patient_view.html' %}
+
+{% block content %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -65,7 +67,9 @@
         <td class="px-4 py-2">Dr. {{appointment.doctor.user.first_name}} {{appointment.doctor.user.last_name}}</td>
         <td class="px-4 py-2">{{appointment.appointment_date}}</td>
         <td class="px-4 py-2">{{appointment.appointment_time_from}} - {{appointment.appointment_time_to}}</td>
-        <td class="px-4 py-2"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Book Appointment</button></td>
+        <td class="px-4 py-2">
+            <a href="{% url 'create_patient_appointment' appointment.pk %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Book Appointment</a>
+        </td>
       </tr>
        {% empty %}
             <li>No appointments available for this date.</li>
@@ -75,3 +79,4 @@
      </div>
 </body>
 </html>
+{% endblock %}

@@ -1,0 +1,11 @@
+<form action="{% url 'create_stripe_payment' appointment.id %}" method="POST">
+    {% csrf_token %}
+    <script
+      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+      data-key="{{ stripe_publishable_key }}"
+      data-amount="5000"
+      data-name="Appointment Payment"
+      data-description="Payment for your appointment"
+      data-currency="usd">
+    </script>
+</form>

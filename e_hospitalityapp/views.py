@@ -1,11 +1,11 @@
 import stripe
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
-from .forms import DoctorRegistrationForm
+from .forms import DoctorRegistrationForm, SelectDateForm
 from .models import *
 
 
@@ -150,6 +150,7 @@ def loginPage(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
+            login(request,user)
             try:
                 # Fetch user role from loginTable, but without checking plaintext password
                 user_details = loginTable.objects.get(username=username)
@@ -158,7 +159,16 @@ def loginPage(request):
 
                 if user_type == 'patient':
                     request.session['username'] = user_name
-                    return redirect('patient_view')
+                    patient = PatientProfile.objects.get(user__username=username)
+                    medical_insurance = get_object_or_404(MedicalInsurance, user_profile=patient)
+
+                    # Pass the data to the template
+                    context = {
+                        'patient_profile': patient,
+                        'medical_insurance': medical_insurance,
+                    }
+
+                    return render(request, 'patient_profile_detail.html', context)
                 elif user_type == 'admin':
                     request.session['username'] = user_name
                     return redirect('admin_list')
@@ -189,11 +199,7 @@ def doctor_view(request):
     return render(request, 'doctor_view.html', {'user_name': user_name})
 
 
-def login(request):
-    return render(request, 'login.html')
-
-
-def logout(request):
+def logout_view(request):
     logout(request)
     return redirect('login')
 
@@ -221,11 +227,8 @@ def doctor_registration2(request):
     return render(request, 'doctor_registration.html')
 
 
-from django.shortcuts import render, redirect
 from django.db import transaction
 from .forms import AdminRegistrationForm
-from .models import Administrator
-from django.contrib.auth.models import User
 
 
 def admin_registration(request):
@@ -263,7 +266,6 @@ def admin_registration(request):
     return render(request, 'admin_registration.html', {'form': form})
 
 
-from django.shortcuts import render
 from .models import Administrator
 
 
@@ -323,9 +325,30 @@ def admin_approve(request, pk):
 
         login_table.save()
 
+        admin.is_approved = True
+        admin.save()
+
         messages.success(request, 'Administrator approved successfully!')
 
     return redirect('admin_list')
+
+def doctor_approve(request, pk):
+    doctor = get_object_or_404(DoctorProfile, pk=pk)
+    login_table = loginTable()
+    if request.method == 'POST':
+        login_table.username = doctor.user.username
+        login_table.password = doctor.user.password
+        login_table.password2 = doctor.user.password
+        login_table.type = 'doctor'
+
+        doctor.is_approved = True
+        doctor.save()
+
+        login_table.save()
+
+        messages.success(request, 'Doctor approved successfully!')
+
+    return redirect('doctor_list')
 
 
 from django.urls import reverse_lazy
@@ -356,9 +379,7 @@ class DoctorDeleteView(DeleteView):
 
 # facility/views.py
 
-from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 from .models import Facility
 from .forms import FacilityForm
 
@@ -410,8 +431,6 @@ def facility_delete(request, pk):
 
 
 # views.py
-from django.shortcuts import render, get_object_or_404
-from .models import PatientProfile, MedicalHistory, MedicalInsurance
 
 
 def patient_profile_detail(request, pk):
@@ -419,13 +438,14 @@ def patient_profile_detail(request, pk):
     patient_profile = get_object_or_404(PatientProfile, pk=pk)
 
     # Get the related medical history and medical insurance
-    medical_history = get_object_or_404(MedicalHistory, user_profile=patient_profile)
+    # medical_history = get_object_or_404(MedicalHistory, user_profile=patient_profile)
     medical_insurance = get_object_or_404(MedicalInsurance, user_profile=patient_profile)
 
     # Pass the data to the template
     context = {
+        'patient':patient_profile,
         'patient_profile': patient_profile,
-        'medical_history': medical_history,
+        # 'medical_history': medical_history,
         'medical_insurance': medical_insurance,
     }
 
@@ -433,7 +453,6 @@ def patient_profile_detail(request, pk):
 
 
 # views.py
-from django.shortcuts import render, get_object_or_404, redirect
 from .models import PatientProfile, MedicalHistory, MedicalInsurance
 from .forms import PatientProfileForm, MedicalHistoryForm, MedicalInsuranceForm
 
@@ -491,8 +510,6 @@ def edit_medical_insurance(request, pk):
     return render(request, 'edit_medical_insurance.html', {'form': form})
 
 
-from django.shortcuts import render, redirect
-from .forms import AppointmentForm
 from .models import DoctorProfile
 
 
@@ -521,10 +538,7 @@ def get_doctors_by_specialization(request):
     return JsonResponse(list(doctors), safe=False)
 
 
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Appointment
 from .forms import AppointmentForm
-from django.urls import reverse
 
 
 def edit_appointment(request, appointment_id):
@@ -569,7 +583,7 @@ def appointment_list(request):
     return render(request, 'appoinments.html', {'appointments': appointments})
 
 
-def patient_appointment_list(request):
+def patient_appointment_list(request,pk):
     selected_date = request.GET.get('date')
     appointments = []
 
@@ -580,32 +594,226 @@ def patient_appointment_list(request):
     if not selected_date:
         selected_date = timezone.now().date()
 
+    patient = PatientProfile.objects.get(pk=pk)
+
     context = {
+        'patient_profile':patient,
         'appointments': appointments,
         'selected_date': selected_date,
     }
     return render(request, 'patient_appointment_list.html', context)
 
 
-def create_checkout_session(request):
+# def create_checkout_session(request):
+#     stripe.api_key = settings.STRIPE_SECRET_KEY
+#
+#     if request.method == 'POST':
+#         line_item = {
+#             'price_data': {
+#                 'currency': 'USD',
+#                 'unit_amount': 100,
+#                 'product_data': {
+#                     'name': ''
+#                 },
+#                 'quantity': 1
+#             }
+#         }
+#         checkout_session = stripe.checkout.Session.create(
+#             payment_method_types=['card'],
+#             line_items=[line_item],
+#             mode='payment',
+#             success_url=request.build_absolute_url(reverse('success')),
+#             cancel_url=request.build_absolute_url(reverse('cancel'))
+#         )
+#         return redirect(checkout_session.url, code=303)
+
+def create_stripe_payment(request, appointment_id):
+        # Get the appointment details
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        appointment = get_object_or_404(PatientAppointment, id=appointment_id)
+
+        if request.method == "POST":
+            # Create Stripe Checkout Session
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': f'Appointment with Dr. {appointment.doctor.user.first_name} {appointment.doctor.user.last_name}',
+                        },
+                        'unit_amount': 5000,  # Amount in cents ($50.00)
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url=request.build_absolute_uri('/payment-success/') + f'?session_id={{CHECKOUT_SESSION_ID}}',
+                cancel_url=request.build_absolute_uri('/payment-cancel/'),
+                metadata={  # Add appointment_id to the metadata
+                    'appointment_id': appointment.id
+                },
+            )
+            return redirect(session.url, code=303)
+
+        return render(request, 'payment_form.html', {
+            'appointment': appointment,
+            'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+        })
+
+
+def payment_success(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
+    session_id = request.GET.get('session_id')
+
+    if session_id:
+        session = stripe.checkout.Session.retrieve(session_id)
+
+        appointment_id = session.metadata.get('appointment_id')
+        appointment = get_object_or_404(PatientAppointment, id=appointment_id)
+
+        if session.payment_status == 'paid':
+            appointment.is_payment_done = True
+            appointment.save()
+
+            payment = Payment.objects.create(
+                appointment=appointment,
+                amount=session.amount_total / 100,
+                stripe_charge_id=session.payment_intent,
+            )
+
+            payment.save()
+
+            return redirect('display_appointments', patient_id=appointment.patient.pk)
+
+    return render(request, 'payment_failed.html')
+
+@login_required
+def create_patient_appointment(request, appointment_id):
+    # Get the logged-in patient's profile
+    patient_profile = get_object_or_404(PatientProfile, user=request.user)
+    print(patient_profile)
+    # Get the selected doctor by doctor_id
+    appointment_schedule = get_object_or_404(Appointment, pk=appointment_id)
+
+    if request.method == "POST":
+        appoinment = PatientAppointment()
+        appoinment.patient = patient_profile
+        appoinment.doctor = appointment_schedule.doctor
+        appoinment.appointment_date = appointment_schedule.appointment_date
+        appoinment.appointment_time_from = appointment_schedule.appointment_time_from
+        appoinment.appointment_time_to = appointment_schedule.appointment_time_to
+        appoinment.save()
+
+            # Redirect to payment page or another step
+        return redirect('create_stripe_payment', appointment_id=appoinment.pk)
+
+    return render(request, 'create_patient_appointment.html', {
+        'doctor': appointment_schedule.doctor,
+        'patient_profile': patient_profile,
+        'appointment_schedule':appointment_schedule
+    })
+
+def display_appointments(request, patient_id):
+    appointments = PatientAppointment.objects.filter(patient_id=patient_id)
+    patient_profile = get_object_or_404(PatientProfile, user=request.user)
+    return render(request, 'display.html', {'appointments': appointments,
+                                            'patient_profile': patient_profile,
+                                            })
+
+def delete_appointment(request, appointment_id):
+    appointment = get_object_or_404(PatientAppointment, id=appointment_id)
+    appointment.delete()
+    return HttpResponseRedirect(reverse('display_appointments', args=[appointment.patient_id]))
+
+
+def reschedule_appointment(request, appointment_id):
+    patient_appointment = get_object_or_404(PatientAppointment, id=appointment_id)
 
     if request.method == 'POST':
-        line_item = {
-            'price_data': {
-                'currency': 'USD',
-                'unit_amount': 100,
-                'product_data': {
-                    'name': ''
-                },
-                'quantity': 1
-            }
-        }
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[line_item],
-            mode='payment',
-            success_url=request.build_absolute_url(reverse('success')),
-            cancel_url=request.build_absolute_url(reverse('cancel'))
-        )
-        return redirect(checkout_session.url, code=303)
+        form = SelectDateForm(request.POST)
+        if form.is_valid():
+            selected_date = form.cleaned_data['appointment_date']
+
+            # Fetch available appointments for the doctor on the selected date
+            available_appointments = Appointment.objects.filter(
+                doctor=patient_appointment.doctor,
+                appointment_date=selected_date
+            )
+
+            return render(request, 'available_slots.html', {
+                'available_appointments': available_appointments,
+                'patient_appointment': patient_appointment
+            })
+    else:
+        form = SelectDateForm()
+
+    return render(request, 'select_date.html', {'form': form})
+
+
+def confirm_reschedule_appointment(request, appointment_id, new_appointment_id):
+    patient_appointment = get_object_or_404(PatientAppointment, id=appointment_id)
+    new_appointment = get_object_or_404(Appointment, id=new_appointment_id)
+
+    # Update the patient appointment with the new date and time
+    patient_appointment.appointment_date = new_appointment.appointment_date
+    patient_appointment.appointment_time_from = new_appointment.appointment_time_from
+    patient_appointment.appointment_time_to = new_appointment.appointment_time_to
+    patient_appointment.save()
+
+    return redirect('display_appointments', patient_id=patient_appointment.patient.id)
+
+def medical_history_list(request, patient_id):
+    patient = get_object_or_404(PatientProfile, id=patient_id)
+    histories = MedicalHistory.objects.filter(user_profile=patient)
+    return render(request, 'medical_history_list.html', {'patient_profile': patient, 'histories': histories})
+
+
+def create_medical_history(request, patient_id):
+    patient = get_object_or_404(PatientProfile, id=patient_id)
+
+    if request.method == 'POST':
+        form = MedicalHistoryForm(request.POST)
+        if form.is_valid():
+            medical_history = form.save(commit=False)
+            medical_history.user_profile = patient
+            medical_history.save()
+            return redirect('medical_history_list', patient_id=patient.id)
+    else:
+        form = MedicalHistoryForm()
+
+    return render(request, 'medical_history_form.html', {'form': form, 'patient_profile': patient})
+
+
+def edit_medical_history(request, history_id):
+    history = get_object_or_404(MedicalHistory, id=history_id)
+
+    if request.method == 'POST':
+        form = MedicalHistoryForm(request.POST, instance=history)
+        if form.is_valid():
+            form.save()
+            return redirect('medical_history_list', patient_id=history.user_profile.id)
+    else:
+        form = MedicalHistoryForm(instance=history)
+
+    return render(request, 'medical_history_form.html', {'form': form, 'patient_profile': history.user_profile})
+
+def delete_medical_history(request, history_id):
+    history = get_object_or_404(MedicalHistory, id=history_id)
+    patient_id = history.user_profile.id
+    history.delete()
+    return HttpResponseRedirect(reverse('medical_history_list', args=[patient_id]))
+
+
+def payment_details_for_patient(request, patient_id):
+    patient = get_object_or_404(PatientProfile, id=patient_id)
+
+    # Get all appointments for the patient
+    appointments = PatientAppointment.objects.filter(patient=patient)
+
+    # Get all payments associated with the patient's appointments
+    payments = Payment.objects.filter(appointment__in=appointments)
+
+    return render(request, 'payment_list.html', {
+        'patient_profile': patient,
+        'payments': payments
+    })

@@ -24,8 +24,7 @@ class PatientProfile(models.Model):
     age = models.PositiveIntegerField()
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
-#     maritalStatus = models.CharField()
-    # blood group
+
     def __str__(self):
         return '{}'.format(self.user)
 
@@ -37,6 +36,7 @@ class DoctorProfile(models.Model):
     license_number = models.CharField(max_length=100, unique=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     date_registered = models.DateTimeField(auto_now_add=True)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Dr. {self.user.first_name} {self.user.last_name} - {self.specialization}"
@@ -58,7 +58,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class MedicalHistory(models.Model):
-    user_profile = models.OneToOneField(PatientProfile, on_delete=models.CASCADE)
+    user_profile = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
     diagnosis = models.TextField()
     treatment = models.TextField()
     medications = models.CharField(max_length=255, blank=True)
@@ -95,6 +95,7 @@ class Administrator(models.Model):
     state = models.CharField(max_length=100)
     postal_code = models.CharField(max_length=20)
     country = models.CharField(max_length=100)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.position}"
@@ -121,3 +122,24 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"Appointment with {self.doctor} on {self.appointment_date}"
+
+class PatientAppointment(models.Model):
+    patient = models.ForeignKey('PatientProfile', on_delete=models.CASCADE)
+    doctor = models.ForeignKey('DoctorProfile', on_delete=models.CASCADE)
+    appointment_date = models.DateField()
+    appointment_time_from = models.TimeField()
+    appointment_time_to = models.TimeField()
+    is_payment_done = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Appointment with {self.doctor} for {self.patient} on {self.appointment_date}"
+
+class Payment(models.Model):
+    appointment = models.ForeignKey(PatientAppointment, on_delete=models.CASCADE, related_name="payment")
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    stripe_charge_id = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Payment for {self.appointment} - Amount: {self.amount}"

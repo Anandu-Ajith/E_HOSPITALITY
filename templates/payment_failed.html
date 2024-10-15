@@ -1,0 +1,5 @@
+{% block content %}
+    <h2>Payment Canceled</h2>
+    <p>Your payment was canceled. Please try again if you wish to complete the appointment booking.</p>
+    <a href="{% url 'appointment_payment' appointment.id %}" class="btn btn-primary">Retry Payment</a>
+{% endblock %}

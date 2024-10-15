@@ -1,0 +1,10 @@
+{% extends 'patient_view.html' %}
+{% block content %}
+
+<h2>Create Medical History for {{ patient_profile.user.username }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

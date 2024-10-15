@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import MedicalHistory, MedicalInsurance, PatientProfile
+from .models import MedicalHistory, MedicalInsurance, PatientProfile, PatientAppointment
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -183,3 +183,12 @@ class AppointmentForm(forms.ModelForm):
             self.fields['doctor'].queryset = DoctorProfile.objects.filter(specialization=self.instance.specialization)
         else:
             self.fields['doctor'].queryset = DoctorProfile.objects.none()
+
+
+class SelectDateForm(forms.Form):
+    appointment_date = forms.DateField(widget=forms.SelectDateWidget)
+
+class MedicalHistoryForm(forms.ModelForm):
+    class Meta:
+        model = MedicalHistory
+        fields = ['diagnosis', 'treatment', 'medications', 'allergies']

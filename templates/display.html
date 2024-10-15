@@ -1,0 +1,17 @@
+{% extends 'patient_view.html' %}
+{% block content %}
+
+<h2>Your Appointments</h2>
+<ul>
+    {% for appointment in appointments %}
+    <li>
+        Appointment with {{ appointment.doctor }} on {{ appointment.appointment_date }}
+        from {{ appointment.appointment_time_from }} to {{ appointment.appointment_time_to }}
+        <a href="{% url 'delete_appointment' appointment.id %}">Delete</a>
+        <a href="{% url 'reschedule_appointment' appointment.id %}">Reschedule</a>
+    </li>
+    {% empty %}
+    <li>No appointments found.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

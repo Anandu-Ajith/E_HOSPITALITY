@@ -1,0 +1,79 @@
+{% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+    <style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+</style>
+<div class="bg-gray-100 p-4 rounded-lg shadow-md">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-gray-800">Book Appointment</h2>
+    <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+      <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L10 5.414l7 7a1 1 0 001.414-1.414L11.414 10l7-7a1 1 0 000-1.414l-7-7a1 1 0 00-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+      Close
+    </button>
+  </div>
+  <div class="flex justify-between items-center mb-4">
+    <div class="flex items-center">
+      <span class="font-bold text-gray-800 mr-2">Patient:</span>{{ patient_profile.first_name }} {{ patient_profile.last_name }}
+
+    </div>
+    <div class="flex items-center">
+      <span class="font-bold text-gray-800 mr-2">Doctor:</span>
+      <span class="text-gray-600">Dr. ANANDU AJITH - Cardiac</span>
+    </div>
+  </div>
+  <div class="flex justify-between items-center mb-4">
+    <div class="flex items-center">
+      <span class="font-bold text-gray-800 mr-2">Appointment date:</span>
+      <span class="text-gray-600">Oct. 1, 2024</span>
+    </div>
+    <div class="flex items-center">
+      <span class="font-bold text-gray-800 mr-2">Appointment time:</span>
+      <span class="text-gray-600">3:24 p.m. - 5:24 p.m.</span>
+    </div>
+  </div>
+  <div class="text-center">
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      Proceed to Payment
+    </button>
+  </div>
+</div>
+    <h2>Book Appointment</h2>
+    
+    <p><strong>Patient:</strong> {{ patient_profile.first_name }} {{ patient_profile.last_name }}</p>
+    <p><strong>Doctor:</strong> Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }} - {{ doctor.specialization }}</p>
+
+    <form method="POST" action="{% url 'create_patient_appointment' appointment_schedule.pk %}">
+        {% csrf_token %}
+         <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" >
+            Patient:
+            </label>
+              <input type="text" class="form-control" value="{{ patient_profile }}" disabled>
+         </div>
+         <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" >
+        Doctor:
+      </label> <input type="text" class="form-control" value="Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }} - {{ doctor.specialization }}" disabled>
+    </div>
+        <label class="block text-gray-700 text-sm font-bold mb-2" >
+        Appointment date:
+      </label>
+        <input type="text" class="form-control" value="{{ appointment_schedule.appointment_date }}" disabled>
+    </div>
+        <label class="block text-gray-700 text-sm font-bold mb-2" >
+        Appointment time:
+      </label><input type="text" class="form-control" value="{{ appointment_schedule.appointment_time_from }} - {{ appointment_schedule.appointment_time_to }}" disabled>
+    </div>
+
+<!--        {{form.as_p}}-->
+
+        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+    </form>
+{% endblock %}

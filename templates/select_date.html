@@ -1,0 +1,7 @@
+<!-- appointments/select_date.html -->
+<h2>Reschedule Appointment</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Check Availability</button>
+</form>

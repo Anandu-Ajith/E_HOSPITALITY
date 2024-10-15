@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+{% extends 'admin_nav.html' %}
+
+{% block content %}
 <html lang="en">
 
 <head>
@@ -123,18 +125,6 @@
 
 <body>
 <div class="flex flex-col h-screen bg-gray-100">
-  <header class="bg-white shadow-md py-4 px-6">
-    <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-      <nav class="flex space-x-4">
-          <a href="{% url 'admin_list' %}" class="text-gray-600 hover:text-gray-900">Admin Requests</a>
-          <a href="{% url 'doctor_list' %}" class="text-gray-600 hover:text-gray-900">Doctor Requests</a>
-        <a href="{% url 'appoinments' %}" class="text-gray-600 hover:text-gray-900">Appointments</a>
-        <a  href="{% url 'facility-list' %}"class="text-gray-600 hover:text-gray-900">Facilities</a>
-        <a href="{% url 'logout' %}" class="text-gray-600 hover:text-gray-900">Logout</a>
-      </nav>
-    </div>
-  </header>
 
 
     <div class="container mx-auto p-4">
@@ -227,3 +217,4 @@
 <!--  });-->
 <!--</script>-->
 </html>
+{% endblock %}

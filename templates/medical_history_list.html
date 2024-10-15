@@ -1,0 +1,20 @@
+{% extends 'patient_view.html' %}
+
+{% block content %}
+<h2>Medical History for {{ patient_profile.user.username }}</h2>
+<ul>
+    {% for history in histories %}
+    <li>
+        Diagnosis: {{ history.diagnosis }}<br>
+        Treatment: {{ history.treatment }}<br>
+        Allergies: {{ history.allergies }}<br>
+        Date: {{ history.date_recorded }}<br>
+        <a href="{% url 'edit_medical_history' history.id %}">Edit</a> |
+        <a href="{% url 'delete_medical_history' history.id %}">Delete</a>
+    </li>
+    {% empty %}
+    <li>No medical history available.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'create_medical_history' patient_profile.id %}">Add New Medical History</a>
+{% endblock %}

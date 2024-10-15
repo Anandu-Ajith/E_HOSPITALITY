@@ -1,0 +1,14 @@
+<!-- appointments/available_slots.html -->
+<h2>Available Appointment Slots</h2>
+<ul>
+    {% for appointment in available_appointments %}
+    <li>
+        Appointment from {{ appointment.appointment_time_from }} to {{ appointment.appointment_time_to }}
+        <a href="{% url 'confirm_reschedule_appointment' patient_appointment.id appointment.id %}">
+            Choose this slot
+        </a>
+    </li>
+    {% empty %}
+    <li>No available slots for the selected date.</li>
+    {% endfor %}
+</ul>
