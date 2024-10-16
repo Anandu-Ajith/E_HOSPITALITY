@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,7 +45,7 @@
     </nav>
   </header>
   <main class="flex flex-col items-center mt-8">
-    <img src="https://placehold.co/600x400" alt="Hospitality Image" class="rounded-md shadow-md">
+    <img src="{% static 'assets/img/hos.png' %}" alt="Hospitality Image" class="rounded-md shadow-md" />
     <h2 class="text-2xl font-bold text-gray-800 mt-8">Welcome to Hospitality</h2>
     <p class="text-gray-600 text-center mt-4">WE ARE ALWAYS HERE FOR YOU......</p>
     <button class="bg-gray-800 text-white px-8 py-3 rounded-md mt-8 hover:bg-gray-700">Explore Now</button>

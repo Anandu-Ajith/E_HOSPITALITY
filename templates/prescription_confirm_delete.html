@@ -1,0 +1,6 @@
+<form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete this prescription?</p>
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'prescription-detail' prescription.pk %}">Cancel</a>
+</form>

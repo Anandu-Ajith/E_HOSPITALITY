@@ -1,20 +1,42 @@
 {% extends 'patient_view.html' %}
 
 {% block content %}
-<h2>Medical History for {{ patient_profile.user.username }}</h2>
-<ul>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #EEEEEE;
+    color: #222831;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+</style>
+
+<div class="bg-white shadow-md rounded-lg p-4">
+  <h2 class="text-2xl font-bold mb-4">Medical History for {{ patient_profile.user.username }}</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {% for history in histories %}
-    <li>
-        Diagnosis: {{ history.diagnosis }}<br>
-        Treatment: {{ history.treatment }}<br>
-        Allergies: {{ history.allergies }}<br>
-        Date: {{ history.date_recorded }}<br>
-        <a href="{% url 'edit_medical_history' history.id %}">Edit</a> |
-        <a href="{% url 'delete_medical_history' history.id %}">Delete</a>
-    </li>
+    <div class="bg-gray-100 rounded-lg p-4">
+      <h3 class="text-lg font-bold mb-2">Diagnosis: {{ history.diagnosis }}</h3>
+      <p class="mb-2">Treatment: {{ history.treatment }}</p>
+      <p class="mb-2">Allergies: {{ history.allergies }}</p>
+      <p class="mb-2">Date: {{ history.date_recorded }}</p>
+
+      <div class="flex gap-2">
+        <a href="{% url 'edit_medical_history' history.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</a>
+        <a href="{% url 'delete_medical_history' history.id %}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</a>
+      </div>
+    </div>
     {% empty %}
-    <li>No medical history available.</li>
+    <div class="col-span-1 md:col-span-2">
+      <p class="text-gray-600">No medical history available.</p>
+    </div>
     {% endfor %}
-</ul>
-<a href="{% url 'create_medical_history' patient_profile.id %}">Add New Medical History</a>
+  </div>
+
+  <a href="{% url 'create_medical_history' patient_profile.id %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 inline-block">Add New Medical History</a>
+</div>
+
 {% endblock %}

@@ -1,10 +1,44 @@
 {% extends 'patient_view.html' %}
 {% block content %}
 
-<h2>Create Medical History for {{ patient_profile.user.username }}</h2>
-<form method="post">
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Create Medical History for {{ patient_profile.user.username }}</h2>
+
+  <form method="post" class="space-y-4">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="id_diagnosis">
+        Diagnosis
+      </label>
+      {{ form.diagnosis }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="id_treatment">
+        Treatment
+      </label>
+      {{ form.treatment }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="id_medications">
+        Medications
+      </label>
+      {{ form.medications }}
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="id_allergies">
+        Allergies
+      </label>
+      {{ form.allergies }}
+    </div>
+
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      Save
+    </button>
+  </form>
+</div>
+
 {% endblock %}

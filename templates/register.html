@@ -60,6 +60,16 @@
 </head>
 
 <body>
+<nav class="bg-white shadow-md py-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <a href="#" class="text-2xl font-bold text-gray-800">Healthcare App</a>
+    <ul class="flex space-x-6">
+      <li><a href="{% url 'doctor-register' %}" class="text-gray-600 hover:text-gray-800">Register as Doctor</a></li>
+      <li><a href="{% url 'administration' %}" class="text-gray-600 hover:text-gray-800">Register as Admin</a></li>
+      <li><a href="#" class="text-gray-600 hover:text-gray-800">Register as Patient</a></li>
+    </ul>
+  </div>
+</nav>
     <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
   <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <div class="mb-4">
@@ -87,16 +97,17 @@
     <input type="number" id="age" name="age" min="1" max="120" required><br><br>
 
     <!-- Gender -->
-    <label>Gender:</label><br>
-    <input type="radio" id="male" name="gender" value="M" required>
-    <label for="male">Male</label><br>
+    <div class="flex flex-col gap-2">
+        <label for="male">Male</label><br>
+    <input type="radio" id="male" name="gender" value="M" required class="w-4 h-4 rounded-full border-gray-300 focus:ring-2 focus:ring-blue-500">
 
-    <input type="radio" id="female" name="gender" value="F" required>
     <label for="female">Female</label><br>
+    <input type="radio" id="female" name="gender" value="F" required class="w-4 h-4 rounded-full border-gray-300 focus:ring-2 focus:ring-blue-500">
 
-    <input type="radio" id="other" name="gender" value="O" required>
     <label for="other">Other</label><br><br>
+    <input type="radio" id="other" name="gender" value="O" required class="w-4 h-4 rounded-full border-gray-300 focus:ring-2 focus:ring-blue-500">
 
+    </div>
     <!-- Blood Group -->
     <label for="blood_group">Blood Group:</label>
     <select id="blood_group" name="blood_group" required>
@@ -120,55 +131,47 @@
       </div>
 
        <div class="flex gap-4">
-    <div class="flex items-center">
-      <input type="radio" id="single" name="maritalStatus" value="single" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 rounded">
-      <label for="single" class="ml-2 text-gray-700">Single</label>
-    </div>
-    <div class="flex items-center">
-      <input type="radio" id="married" name="maritalStatus" value="married" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 rounded">
-      <label for="married" class="ml-2 text-gray-700">Married</label>
-    </div>
-        <div>
+    <div>
         <label for="phoneno" class="block text-gray-700 text-sm font-bold mb-2">Phone Number (Mobile, Landline)</label>
         <input type="number" id="phoneno" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Mobile Number">
       </div>
-      <div>
-        <label for="insurance_info" class="block text-gray-700 text-sm font-bold mb-2">Insurance Policy Number</label>
-        <input type="number" id="insurance_info" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
-           <div>
-        <label for="diagnosis" class="block text-gray-700 text-sm font-bold mb-2">Diagnosis:</label>
-        <input name= 'diagnosis' type="text" id="diagnosis" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
-           <div>
-        <label for="treatment" class="block text-gray-700 text-sm font-bold mb-2">Treatment:</label>
-        <input type="text" name= 'treatment'id="treatment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
-             <div>
-        <label for="medications" class="block text-gray-700 text-sm font-bold mb-2">Medication</label>
-        <input type="text" name= 'medications' id="medications" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
-             <div>
-        <label for="allergies" class="block text-gray-700 text-sm font-bold mb-2">Allergies</label>
-        <input type="text" name= 'allergies' id="allergies" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
 
-           <div>
-        <label for="provider_name" class="block text-gray-700 text-sm font-bold mb-2">provider_name:</label>
-        <input name= 'provider_name' type="text" id="provider_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
-           <div>
-        <label for="policy_number" class="block text-gray-700 text-sm font-bold mb-2">policy_number:</label>
-        <input name= 'policy_number' type="text" id="policy_number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
-           <div>
-        <label for="expiration_date" class="block text-gray-700 text-sm font-bold mb-2">expiration_date:</label>
-        <input name= 'expiration_date' type="date" id="expiration_date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
-           <div>
-        <label for="coverage_details" class="block text-gray-700 text-sm font-bold mb-2">coverage_details:</label>
-        <input name= 'coverage_details' type="text" id="coverage_details" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="">
-      </div>
+        <div class="section-title">Medical History</div>
+                <div>
+                    <label for="diagnosis" class="block text-gray-700">Diagnosis:</label>
+                    <input type="text" id="diagnosis" name="diagnosis" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., Diabetes">
+                </div>
+                <div>
+                    <label for="treatment" class="block text-gray-700">Treatment:</label>
+                    <input type="text" id="treatment" name="treatment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., Insulin therapy">
+                </div>
+                <div>
+                    <label for="medications" class="block text-gray-700">Medications:</label>
+                    <input type="text" id="medications" name="medications" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., Metformin">
+                </div>
+                <div>
+                    <label for="allergies" class="block text-gray-700">Allergies:</label>
+                    <input type="text" id="allergies" name="allergies" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., Penicillin">
+                </div>
+<br><br><br>
+
+           <div class="section-title">Insurance Information</div>
+                <div>
+                    <label for="provider_name" class="block text-gray-700">Provider Name:</label>
+                    <input type="text" id="provider_name" name="provider_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., HealthCare Inc.">
+                </div>
+                <div>
+                    <label for="policy_number" class="block text-gray-700">Policy Number:</label>
+                    <input type="text" id="policy_number" name="policy_number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., 123456789">
+                </div>
+                <div>
+                    <label for="expiration_date" class="block text-gray-700">Expiration Date:</label>
+                    <input type="date" id="expiration_date" name="expiration_date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div>
+                    <label for="coverage_details" class="block text-gray-700">Coverage Details:</label>
+                    <input type="text" id="coverage_details" name="coverage_details" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., Full coverage for hospital stays">
+                </div>
 
       <div class="flex items-center justify-between">
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Register</button>

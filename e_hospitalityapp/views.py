@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
-from .forms import DoctorRegistrationForm, SelectDateForm
+from .forms import DoctorRegistrationForm, SelectDateForm, PrescriptionForm, AdminEditForm
 from .models import *
 
 
@@ -162,7 +162,6 @@ def loginPage(request):
                     patient = PatientProfile.objects.get(user__username=username)
                     medical_insurance = get_object_or_404(MedicalInsurance, user_profile=patient)
 
-                    # Pass the data to the template
                     context = {
                         'patient_profile': patient,
                         'medical_insurance': medical_insurance,
@@ -174,7 +173,12 @@ def loginPage(request):
                     return redirect('admin_list')
                 elif user_type == 'doctor':
                     request.session['username'] = user_name
-                    return redirect('doctor_view')
+                    doctor = DoctorProfile.objects.get(user__username=username)
+
+                    context = {
+                        'doctor': doctor
+                    }
+                    return render(request,'doctor_view.html', context)
 
             except loginTable.DoesNotExist:
                 messages.error(request, 'User role not found.')
@@ -282,27 +286,28 @@ def admin_list(request):
 
 
 def admin_edit(request, pk):
+    # Fetch the specific administrator and related user
     admin = get_object_or_404(Administrator, pk=pk)
+    user = admin.user
 
     if request.method == 'POST':
-        form = AdminRegistrationForm(request.POST, request.FILES, instance=admin.user)
+        # Form will handle both User and Administrator data
+        form = AdminEditForm(request.POST, request.FILES, instance=admin)
+
         if form.is_valid():
-            form.save()
-            admin.department = form.cleaned_data['department']
-            admin.position = form.cleaned_data['position']
-            admin.employee_id = form.cleaned_data['employee_id']
-            admin.date_of_joining = form.cleaned_data['date_of_joining']
-            admin.profile_picture = form.cleaned_data.get('profile_picture')
-            admin.save()
+            form.save()  # This will save both User and Administrator data
             messages.success(request, 'Administrator updated successfully!')
             return redirect('admin_list')
     else:
-        form = AdminRegistrationForm(instance=admin.user)
+        # Prepopulate the form with both User and Administrator data
+        form = AdminEditForm(instance=admin, initial={
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+        })
 
     return render(request, 'admin_edit.html', {'form': form, 'admin': admin})
 
-
-# View to delete an administrator
 def admin_delete(request, pk):
     admin = get_object_or_404(Administrator, pk=pk)
 
@@ -363,10 +368,10 @@ class DoctorListView(ListView):
     context_object_name = 'doctors'
 
 
-# You can add update and delete views as well
+
 class DoctorUpdateView(UpdateView):
     model = DoctorProfile
-    fields = ['specialization']  # Fields you want to allow updating
+    fields = ['specialization']
     template_name = 'doctor_edit.html'
     success_url = reverse_lazy('doctor_list')
 
@@ -518,7 +523,7 @@ def create_appointment(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/')  # Redirect to a success page
+            return redirect('appoinments')
         else:
             print(form.errors)
             print("Submitted data:", request.POST)
@@ -640,7 +645,7 @@ def create_stripe_payment(request, appointment_id):
                     'price_data': {
                         'currency': 'usd',
                         'product_data': {
-                            'name': f'Appointment with Dr. {appointment.doctor.user.first_name} {appointment.doctor.user.last_name}',
+                            'name': f'Appointment with Dr. {appointment.appoinment.doctor.user.first_name} {appointment.appoinment.doctor.user.last_name}',
                         },
                         'unit_amount': 5000,  # Amount in cents ($50.00)
                     },
@@ -648,7 +653,7 @@ def create_stripe_payment(request, appointment_id):
                 }],
                 mode='payment',
                 success_url=request.build_absolute_uri('/payment-success/') + f'?session_id={{CHECKOUT_SESSION_ID}}',
-                cancel_url=request.build_absolute_uri('/payment-cancel/'),
+                cancel_url=request.build_absolute_uri('/payment-cancel/') + f'?patient_id={{appointment.patient.id}}',
                 metadata={  # Add appointment_id to the metadata
                     'appointment_id': appointment.id
                 },
@@ -685,7 +690,7 @@ def payment_success(request):
 
             return redirect('display_appointments', patient_id=appointment.patient.pk)
 
-    return render(request, 'payment_failed.html')
+    return redirect('appoinments')
 
 @login_required
 def create_patient_appointment(request, appointment_id):
@@ -698,10 +703,11 @@ def create_patient_appointment(request, appointment_id):
     if request.method == "POST":
         appoinment = PatientAppointment()
         appoinment.patient = patient_profile
-        appoinment.doctor = appointment_schedule.doctor
-        appoinment.appointment_date = appointment_schedule.appointment_date
-        appoinment.appointment_time_from = appointment_schedule.appointment_time_from
-        appoinment.appointment_time_to = appointment_schedule.appointment_time_to
+        # appoinment.doctor = appointment_schedule.doctor
+        # appoinment.appointment_date = appointment_schedule.appointment_date
+        # appoinment.appointment_time_from = appointment_schedule.appointment_time_from
+        # appoinment.appointment_time_to = appointment_schedule.appointment_time_to
+        appoinment.appoinment = appointment_schedule
         appoinment.save()
 
             # Redirect to payment page or another step
@@ -736,7 +742,7 @@ def reschedule_appointment(request, appointment_id):
 
             # Fetch available appointments for the doctor on the selected date
             available_appointments = Appointment.objects.filter(
-                doctor=patient_appointment.doctor,
+                doctor=patient_appointment.appoinment.doctor,
                 appointment_date=selected_date
             )
 
@@ -755,9 +761,10 @@ def confirm_reschedule_appointment(request, appointment_id, new_appointment_id):
     new_appointment = get_object_or_404(Appointment, id=new_appointment_id)
 
     # Update the patient appointment with the new date and time
-    patient_appointment.appointment_date = new_appointment.appointment_date
-    patient_appointment.appointment_time_from = new_appointment.appointment_time_from
-    patient_appointment.appointment_time_to = new_appointment.appointment_time_to
+    # patient_appointment.appointment_date = new_appointment.appointment_date
+    # patient_appointment.appointment_time_from = new_appointment.appointment_time_from
+    # patient_appointment.appointment_time_to = new_appointment.appointment_time_to
+    patient_appointment.appoinment = new_appointment
     patient_appointment.save()
 
     return redirect('display_appointments', patient_id=patient_appointment.patient.id)
@@ -817,3 +824,76 @@ def payment_details_for_patient(request, patient_id):
         'patient_profile': patient,
         'payments': payments
     })
+
+def patient_list(request):
+    patients = PatientProfile.objects.all()
+    return render(request, 'patient_list.html', {'patients': patients})
+
+def doctor_appointments(request, doctor_id):
+    doctor = get_object_or_404(DoctorProfile, id=doctor_id)
+    appointments = Appointment.objects.filter(doctor=doctor)  # Filter by doctor
+    return render(request, 'doctor_appointments.html', {'doctor': doctor, 'appointments': appointments})
+
+def patient_list_for_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    patient_appointments = PatientAppointment.objects.filter(appoinment=appointment)  # Filter by appointment
+    patients = [pa.patient for pa in patient_appointments]  # Get patients from patient_appointments
+    return render(request, 'patient_list_for_appointment.html', {'appointment': appointment, 'patients': patients})
+
+
+@login_required
+def create_prescription(request,pk):
+    doctor_profile = get_object_or_404(DoctorProfile, user=request.user)
+    patient = get_object_or_404(PatientProfile, pk=pk)
+    if request.method == 'POST':
+        form = PrescriptionForm(request.POST)
+        if form.is_valid():
+            prescription = form.save(commit=False)
+            prescription.doctor = doctor_profile  # Set logged-in doctor's profile
+            prescription.patient = patient  # Set selected patient
+            prescription.save()
+            return redirect('patient_list')
+    else:
+        form = PrescriptionForm(initial={'doctor': doctor_profile, 'patient': patient})
+    return render(request, 'prescription_form.html', {'form': form, 'patient': patient})
+
+# Edit Prescription
+@login_required
+def edit_prescription(request, pk):
+    prescription = get_object_or_404(Prescription, pk=pk)
+    if request.method == 'POST':
+        form = PrescriptionForm(request.POST, instance=prescription)
+        if form.is_valid():
+            form.save()
+            return redirect('prescription-detail', pk=prescription.pk)
+    else:
+        form = PrescriptionForm(instance=prescription)
+    return render(request, 'prescription_form.html', {'form': form})
+
+# View Prescription Details
+@login_required
+def view_prescription(request, pk):
+    prescription = get_object_or_404(Prescription, pk=pk)
+    return render(request, 'prescription_detail.html', {'prescription': prescription})
+
+# Delete Prescription
+@login_required
+def delete_prescription(request, pk):
+    prescription = get_object_or_404(Prescription, pk=pk)
+    if request.method == 'POST':
+        prescription.delete()
+        return redirect('prescription-list')
+    return render(request, 'prescription_confirm_delete.html', {'prescription': prescription})
+
+def view_patient_prescriptions(request, patient_id):
+    patient = get_object_or_404(PatientProfile, pk=patient_id)
+    prescriptions = Prescription.objects.filter(patient=patient)
+    return render(request, 'patient_prescriptions.html', {'prescriptions': prescriptions, 'patient': patient})
+
+
+def health(request):
+    return render(request,'health.html')
+
+
+def payment_cancel(request,patient_id):
+    return redirect( 'display_appointments',patient_id=patient_id)

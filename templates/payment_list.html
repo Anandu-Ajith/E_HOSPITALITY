@@ -1,20 +1,62 @@
 {% extends 'patient_view.html' %}
 
 {% block content %}
-<h2>Payment Details for {{ patient_profile.user.username }}</h2>
-<ul>
-    {% for payment in payments %}
-    <li>
-        Appointment Date: {{ payment.appointment.appointment_date }}<br>
-        Doctor: {{ payment.appointment.doctor }}<br>
-        Amount: ${{ payment.amount }}<br>
-        Stripe Charge ID: {{ payment.stripe_charge_id }}<br>
-        Payment Date: {{ payment.timestamp }}<br>
-        <hr>
-    </li>
-    {% empty %}
-    <li>No payment details available.</li>
-    {% endfor %}
-</ul>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #F7CAC9;
+  }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+  th {
+    background-color: #92A8D1;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background-color: #F7CAC9;
+  }
+</style>
+
+<div class="container mx-auto p-4">
+  <h1 class="text-3xl font-bold text-gray-800 mb-4">Payment Details for {{ patient_profile.user.username }}</h1>
+  <div class="bg-white shadow-md rounded-lg p-4">
+    <table class="w-full">
+      <thead>
+        <tr>
+          <th class="text-left font-bold text-gray-600 p-2">Appointment Date</th>
+          <th class="text-left font-bold text-gray-600 p-2">Doctor</th>
+          <th class="text-left font-bold text-gray-600 p-2">Amount</th>
+          <th class="text-left font-bold text-gray-600 p-2">Stripe Charge ID</th>
+          <th class="text-left font-bold text-gray-600 p-2">Payment Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payment in payments %}
+        <tr>
+          <td class="p-2">{{ payment.appointment.appoinment.appointment_date }}</td>
+          <td class="p-2">{{ payment.appointment.appoinment.doctor }}</td>
+          <td class="p-2">${{ payment.amount }}</td>
+          <td class="p-2">{{ payment.stripe_charge_id }}</td>
+          <td class="p-2">{{ payment.timestamp }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-gray-600">No payment details available.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 {% endblock %}

@@ -1,0 +1,14 @@
+<h2>Prescriptions for {{ patient.username }}</h2>
+<ul>
+    {% for prescription in prescriptions %}
+        <li>
+            <strong>Doctor:</strong> {{ prescription.doctor.username }}<br>
+            <strong>Medicines:</strong> {{ prescription.medicines }}<br>
+            <strong>Date Added:</strong> {{ prescription.date_added }}<br>
+            <a href="{% url 'prescription-detail' prescription.pk %}">View Details</a>
+        </li>
+    {% empty %}
+        <li>No prescriptions found for this patient.</li>
+    {% endfor %}
+</ul>
+`

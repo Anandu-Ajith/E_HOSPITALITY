@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import MedicalHistory, MedicalInsurance, PatientProfile, PatientAppointment
+from .models import MedicalHistory, MedicalInsurance, PatientProfile, PatientAppointment, Prescription
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -192,3 +192,51 @@ class MedicalHistoryForm(forms.ModelForm):
     class Meta:
         model = MedicalHistory
         fields = ['diagnosis', 'treatment', 'medications', 'allergies']
+
+class PrescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Prescription
+        fields = ['doctor', 'patient', 'medicines']
+
+    def __init__(self, *args, **kwargs):
+            super(PrescriptionForm, self).__init__(*args, **kwargs)
+            # Make doctor and patient fields read-only
+            self.fields['doctor'].disabled = True
+            self.fields['patient'].disabled = True
+
+
+from django import forms
+from django.contrib.auth.models import User
+from .models import Administrator
+
+class AdminEditForm(forms.ModelForm):
+    # Fields for the User model
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    email = forms.EmailField()
+
+    # Fields for the Administrator model
+    department = forms.CharField(max_length=100)
+    position = forms.CharField(max_length=100)
+    employee_id = forms.CharField(max_length=50)
+    date_of_joining = forms.DateField(widget=forms.SelectDateWidget())
+    profile_picture = forms.ImageField(required=False)
+
+    class Meta:
+        model = Administrator
+        fields = ['department', 'position', 'employee_id', 'date_of_joining', 'profile_picture']  # Administrator fields only
+
+    def save(self, commit=True):
+        admin = super().save(commit=False)
+        user = admin.user  # Get the related User object
+
+        # Update the User fields
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+
+        if commit:
+            user.save()  # Save User model
+            admin.save()  # Save Administrator model
+
+        return admin

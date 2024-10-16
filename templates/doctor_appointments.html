@@ -1,0 +1,29 @@
+<!-- templates/doctor_appointments.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Appointments for Dr. {{ doctor.user.username }}</title>
+</head>
+<body>
+    <h1>Appointments for Dr. {{ doctor.user.username }}</h1>
+    <table>
+        <tr>
+            <th>Specialization</th>
+            <th>Date</th>
+            <th>Time From</th>
+            <th>Time To</th>
+        </tr>
+        {% for appointment in appointments %}
+        <tr>
+            <td>{{ appointment.specialization }}</td>
+            <td>{{ appointment.appointment_date }}</td>
+            <td>{{ appointment.appointment_time_from }}</td>
+            <td>{{ appointment.appointment_time_to }}</td>
+            <td>
+                <a href="{% url 'patient_list_for_appointment' appointment.pk %}">view patients</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

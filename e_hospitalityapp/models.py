@@ -42,7 +42,7 @@ class DoctorProfile(models.Model):
         return f"Dr. {self.user.first_name} {self.user.last_name} - {self.specialization}"
 
 class loginTable(models.Model):
-    username=models.CharField(max_length=200)
+    username=models.CharField(max_length=200,unique=True)
     # date_of_birth = models.DateField()
     # gender = models.TextField()
     password= models.CharField(max_length=200)
@@ -125,15 +125,16 @@ class Appointment(models.Model):
 
 class PatientAppointment(models.Model):
     patient = models.ForeignKey('PatientProfile', on_delete=models.CASCADE)
-    doctor = models.ForeignKey('DoctorProfile', on_delete=models.CASCADE)
-    appointment_date = models.DateField()
-    appointment_time_from = models.TimeField()
-    appointment_time_to = models.TimeField()
+    # doctor = models.ForeignKey('DoctorProfile', on_delete=models.CASCADE)
+    # appointment_date = models.DateField()
+    # appointment_time_from = models.TimeField()
+    # appointment_time_to = models.TimeField()
+    appoinment = models.ForeignKey('Appointment', on_delete=models.CASCADE)
     is_payment_done = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Appointment with {self.doctor} for {self.patient} on {self.appointment_date}"
+        return f"Appointment with {self.appoinment.doctor} for {self.patient} on {self.appoinment.appointment_date}"
 
 class Payment(models.Model):
     appointment = models.ForeignKey(PatientAppointment, on_delete=models.CASCADE, related_name="payment")
@@ -143,3 +144,12 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment for {self.appointment} - Amount: {self.amount}"
+
+class Prescription(models.Model):
+    doctor = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE, related_name='prescriptions_by_doctor')
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='prescriptions_for_patient')
+    medicines = models.TextField()  # A field to store a list or description of medicines
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Prescription for {self.patient} by Dr. {self.doctor} on {self.date_added}"

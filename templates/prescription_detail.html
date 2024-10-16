@@ -1,0 +1,7 @@
+<h2>Prescription Details</h2>
+<p><strong>Doctor:</strong> {{ prescription.doctor }}</p>
+<p><strong>Patient:</strong> {{ prescription.patient }}</p>
+<p><strong>Medicines:</strong> {{ prescription.medicines }}</p>
+<p><strong>Date Added:</strong> {{ prescription.date_added }}</p>
+<a href="{% url 'prescription-edit' prescription.pk %}">Edit</a>
+<a href="{% url 'prescription-delete' prescription.pk %}">Delete</a>

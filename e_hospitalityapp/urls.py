@@ -2,7 +2,7 @@
 from django.urls import path,include
 from .import views
 from .views import DoctorListView, DoctorUpdateView, DoctorDeleteView, patient_profile_detail, \
-    get_doctors_by_specialization, appointment_list, patient_appointment_list
+    get_doctors_by_specialization, appointment_list, patient_appointment_list, payment_cancel
 from .views import (
     edit_patient_profile,
     edit_medical_history,
@@ -14,6 +14,7 @@ urlpatterns = [
     path("",views.home,name='home'),
     path("register/", views.patientRegistration, name='register'),
     path('login/',views.loginPage,name='login'),
+    path('health/',views.health,name='health'),
     path('admin_view/', views.admin_view, name='admin_view'),
     path('doctor_view/', views.doctor_view, name='doctor_view'),
     path('patient_view/',views.patient_view,name='patient_view'),
@@ -61,5 +62,18 @@ urlpatterns = [
     path('medical-history/<int:history_id>/edit/', views.edit_medical_history, name='edit_medical_history'),
     path('medical-history/<int:history_id>/delete/', views.delete_medical_history, name='delete_medical_history'),
     path('patients/<int:patient_id>/payments/', views.payment_details_for_patient, name='payment_details_for_patient'),
+
+    path('patients/', views.patient_list, name='patient_list'),
+    path('doctor/<int:doctor_id>/appointments/', views.doctor_appointments, name='doctor_appointments'),
+    path('appointment/<int:appointment_id>/patients/', views.patient_list_for_appointment, name='patient_list_for_appointment'),
+
+    path('prescription/add/<int:pk>', views.create_prescription, name='prescription-add'),
+    path('prescription/<int:pk>/edit/', views.edit_prescription, name='prescription-edit'),
+    path('prescription/<int:pk>/', views.view_prescription, name='prescription-detail'),
+    path('prescription/<int:pk>/delete/', views.delete_prescription, name='prescription-delete'),
+    path('patient/<int:patient_id>/prescriptions/', views.view_patient_prescriptions, name='patient-prescriptions'),
+    path('admin-edit/<int:pk>/', views.admin_edit, name='admin_edit'),
+    path('admin-delete/<int:pk>/', views.admin_delete, name='admin_delete'),
+    path('payment-cancel/<int:patient_id>', payment_cancel, name='payment_cancel'),
 
 ]

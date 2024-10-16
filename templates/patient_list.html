@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient List Component 🏥</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  table {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  button {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .bg-blue-500 {
+    background-color: #007bff;
+  }
+  .bg-blue-700 {
+    background-color: #0056b3;
+  }
+  .bg-green-500 {
+    background-color: #28a745;
+  }
+  .bg-green-700 {
+    background-color: #218838;
+  }
+  .bg-yellow-500 {
+    background-color: #ffc107;
+  }
+  .bg-yellow-700 {
+    background-color: #e0a800;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .font-bold {
+    font-weight: bold;
+  }
+  .hover:bg-gray-100 {
+    background-color: #f8f9fa;
+  }
+  .rounded {
+    border-radius: 4px;
+  }
+  .ml-2 {
+    margin-left: 8px;
+  }
+</style>
+</head>
+
+<body>
+    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Patient List</h2>
+  <table class="w-full border-collapse">
+    <thead>
+      <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+        <th class="py-3 px-6 text-left">Username</th>
+        <th class="py-3 px-6 text-left">Age</th>
+        <th class="py-3 px-6 text-left">Gender</th>
+        <th class="py-3 px-6 text-left">Blood Group</th>
+        <th class="py-3 px-6 text-left">Actions</th>
+      </tr>
+    </thead>
+{% for patient in patients %}
+    <tbody>
+      <tr class="border-b border-gray-200 hover:bg-gray-100">
+        <td class="py-3 px-6 text-left whitespace-nowrap"><a href="#" class="text-blue-500 hover:text-blue-700">{{ patient.user.username }}</a></td>
+        <td class="py-3 px-6 text-left whitespace-nowrap">{{ patient.age }}</td>
+        <td class="py-3 px-6 text-left whitespace-nowrap">{{ patient.get_gender_display }}</td>
+        <td class="py-3 px-6 text-left whitespace-nowrap">{{ patient.blood_group }}</td>
+        <td class="py-3 px-6 text-left whitespace-nowrap">
+          <a href="{% url 'patient_profile_detail' patient.pk %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View Details</a>
+          <a href="{% url 'prescription-add' patient.pk %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2">Add Prescription</a>
+          <a href="{% url 'patient-prescriptions' patient.pk %}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded ml-2">Show Prescription</a>
+        </td>
+         </tbody>
+ {% endfor %}
+  </table>
+</div>
+</body>
+
+
+</html>

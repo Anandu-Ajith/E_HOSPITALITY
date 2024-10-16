@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Title</title><style>
+      body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    min-height: 100vh;
+  }
+  </style>
 </head>
 <body>
-<h1>Edit Medical Insurance</h1>
-<form method="POST">
+
+<form method="POST" class="text-3xl font-bold mb-4 text-gray-800">
+    <h1>Edit Medical Insurance</h1>
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save Changes</button>

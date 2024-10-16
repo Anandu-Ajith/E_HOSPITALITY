@@ -2,11 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard 🏥</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .approved-status {
+            background-color: white;
+            color: black;
+        }
+        .not-approved-status {
+            background-color: red;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-<h1>
-    This is doctors view {{user_name}}
-</h1>
+    <div class="flex flex-col h-screen bg-gray-100">
+        <!-- Header Section -->
+        <div class="bg-gray-800 text-white p-4 shadow-md">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold">Doctor Dashboard</h1>
+                <div class="flex space-x-4">
+                    <a href="{% url 'doctor_appointments' doctor.pk %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        New Appointment
+                    </a>
+                    <a href="{% url 'patient_list' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        Patients
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="flex flex-1 p-4">
+           
+            <!-- Appointments and Approval Section -->
+            <div class="w-2/3 bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-4">Today's Appointments & Approval Status</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for appointment in appointments %}
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                        <h3 class="text-lg font-bold mb-2">{{ appointment.patient_name }}</h3>
+                        <p class="text-gray-600">Appointment Time: {{ appointment.time }}</p>
+                        <p class="text-gray-600">Appointment Type: {{ appointment.type }}</p>
+                        <!-- Approval Status -->
+                        <p class="font-bold mt-2">
+                            Status:
+                            <span class="{% if appointment.is_approved %}approved-status{% else %}not-approved-status{% endif %}">
+                                {% if appointment.is_approved %}
+                                    Approved
+                                {% else %}
+                                    Not Approved
+                                {% endif %}
+                            </span>
+                        </p>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                            View Details
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
